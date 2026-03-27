@@ -298,6 +298,7 @@ Keep everything short, specific, and non-salesy. For keyPeople, ONLY include rea
         whyItMatters: result.personaStarters?.whyItMatters,
         confidenceScore: result.confidenceScore,
         suitabilityScore: result.suitabilityScore,
+        keyPeople: result.keyPeople || [],
         publicContacts,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
