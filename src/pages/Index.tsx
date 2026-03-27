@@ -70,7 +70,8 @@ const Index = () => {
     }
   };
 
-  const handleDiscoverySelect = (urls: string[]) => {
+  const handleDiscoverySelect = (urls: string[], theme?: string) => {
+    if (theme) setUserTheme(theme);
     handleGenerate(urls.map((url) => ({ url, prospectEmail: "" })));
     inputRef.current?.scrollIntoView({ behavior: "smooth" });
   };
