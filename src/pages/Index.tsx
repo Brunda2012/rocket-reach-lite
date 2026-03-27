@@ -89,6 +89,7 @@ const Index = () => {
       {snapshots.length > 0 && (
         <OutreachDashboard snapshots={snapshots} urls={analyzedUrls} userTheme={userTheme} />
       )}
+    </div>
   );
 };
 
