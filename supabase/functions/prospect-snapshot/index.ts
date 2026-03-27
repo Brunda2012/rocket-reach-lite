@@ -28,30 +28,59 @@ serve(async (req) => {
       });
     }
 
-    // 1. Fetch HTML
+    // 1. Build base URL and sub-page paths to scrape
     let formattedUrl = url.trim();
     if (!formattedUrl.startsWith("http://") && !formattedUrl.startsWith("https://")) {
       formattedUrl = `https://${formattedUrl}`;
     }
+    const baseUrl = formattedUrl.replace(/\/+$/, "");
+    const subPaths = ["/about", "/about-us", "/careers", "/jobs", "/blog"];
 
-    let visibleText = "";
-    try {
-      const siteRes = await fetch(formattedUrl, {
-        headers: { "User-Agent": "Mozilla/5.0 (compatible; ProspectBot/1.0)" },
-      });
-      const html = await siteRes.text();
-      // 2. Clean HTML → visible text
-      visibleText = html
+    function stripHtml(html: string): string {
+      return html
         .replace(/<script[\s\S]*?<\/script>/gi, "")
         .replace(/<style[\s\S]*?<\/style>/gi, "")
         .replace(/<[^>]+>/g, " ")
         .replace(/&[a-z]+;/gi, " ")
         .replace(/\s+/g, " ")
-        .trim()
-        .slice(0, 8000);
-    } catch {
-      visibleText = `Could not fetch content from ${formattedUrl}. Analyze based on the domain name alone.`;
+        .trim();
     }
+
+    async function fetchPage(pageUrl: string): Promise<string> {
+      try {
+        const res = await fetch(pageUrl, {
+          headers: { "User-Agent": "Mozilla/5.0 (compatible; ProspectBot/1.0)" },
+          redirect: "follow",
+        });
+        if (!res.ok) return "";
+        const html = await res.text();
+        return stripHtml(html);
+      } catch {
+        return "";
+      }
+    }
+
+    // 2. Fetch homepage + sub-pages in parallel
+    const [homepageText, ...subTexts] = await Promise.all([
+      fetchPage(baseUrl),
+      ...subPaths.map((p) => fetchPage(`${baseUrl}${p}`)),
+    ]);
+
+    // 3. Merge and deduplicate content, cap at ~12k chars
+    const sections: string[] = [];
+    if (homepageText) sections.push(`[Homepage]\n${homepageText.slice(0, 4000)}`);
+    subPaths.forEach((path, i) => {
+      const text = subTexts[i];
+      if (text && text.length > 200) {
+        sections.push(`[${path.replace("/", "")}]\n${text.slice(0, 3000)}`);
+      }
+    });
+
+    const visibleText = sections.length > 0
+      ? sections.join("\n\n---\n\n").slice(0, 12000)
+      : `Could not fetch content from ${formattedUrl}. Analyze based on the domain name alone.`;
+
+    console.log(`Scraped ${sections.length} pages, total ${visibleText.length} chars`);
 
     // 3. Send to LLM with structured output
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
