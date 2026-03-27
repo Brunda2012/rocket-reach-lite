@@ -34,6 +34,7 @@ const Index = () => {
           insights: data.insights,
           conversationStarters: data.conversationStarters || {},
           whyItMatters: data.whyItMatters,
+          confidenceScore: data.confidenceScore ?? 0,
         });
       } else {
         throw new Error(data?.error || "Analysis failed");
