@@ -36,6 +36,7 @@ export interface SnapshotResult {
   conversationStarters: ConversationStarters;
   whyItMatters: string;
   confidenceScore: number;
+  suitabilityScore: number;
 }
 
 /* ── helpers ── */
