@@ -181,14 +181,19 @@ const Index = () => {
               </div>
 
               {snapshots.map((snap, i) => (
-                <div key={i} className="bg-card rounded-xl border border-border shadow-card p-4 flex items-center justify-between">
-                  <div>
+                <div key={i} className="bg-card rounded-xl border border-border shadow-card p-4 flex items-center justify-between gap-3">
+                  <div className="min-w-0">
                     <p className="text-sm font-semibold text-foreground">{snap.companyProfile.industry} · {snap.companyProfile.companySize}</p>
                     <p className="text-xs text-muted-foreground">Confidence {snap.confidenceScore}/100 · Suitability {snap.suitabilityScore}/100</p>
                   </div>
-                  <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate("/company", { state: { snapshot: snap } })}>
-                    <Eye className="w-3.5 h-3.5" /> View Profile
-                  </Button>
+                  <div className="flex gap-2 shrink-0">
+                    <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate("/company", { state: { snapshot: snap } })}>
+                      <Eye className="w-3.5 h-3.5" /> Profile
+                    </Button>
+                    <Button size="sm" className="gap-1.5" onClick={() => navigate("/outreach", { state: { snapshot: snap, userTheme } })}>
+                      <Send className="w-3.5 h-3.5" /> Outreach
+                    </Button>
+                  </div>
                 </div>
               ))}
 
