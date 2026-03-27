@@ -99,6 +99,7 @@ Input: Raw text scraped from multiple pages of the company's website (homepage, 
 Task:
 - Infer a company profile: industry, estimated company size, top keywords, and brand tone/voice.
 - Extract structured signals: hiring signals, tech stack, strategic initiatives, pain points, and growth indicators.
+- Identify recent changes: anything that appears new, changing, or recently updated — product launches, leadership changes, rebrand, new partnerships, policy shifts, recent blog posts, events, or announcements. Look for dates, "new", "announcing", "introducing", "just launched", "coming soon", etc.
 - Extract 3 concise, high-value insights about the company's focus, strategy, or priorities.
 - Write 4 personalized conversation starters, each tailored to a specific persona: CTO, CEO, Head of Operations, and Head of Sales. Each should reference relevant signals for that role.
 - Write 1 sentence explaining why this matters to them.
