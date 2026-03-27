@@ -66,6 +66,7 @@ const Index = () => {
       );
       setSnapshots(results);
       setAnalyzedUrls(entries.map((e) => e.url));
+    } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Could not analyze the URLs.";
       toast({ title: "Error", description: message, variant: "destructive" });
     } finally {
