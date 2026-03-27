@@ -1,4 +1,11 @@
-import { MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code, Rocket, AlertTriangle, TrendingUp, User } from "lucide-react";
+import { MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code, Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2 } from "lucide-react";
+
+export interface CompanyProfile {
+  industry: string;
+  companySize: string;
+  keywords: string[];
+  tone: string;
+}
 
 export interface SnapshotSignals {
   hiringSignals: string[];
@@ -16,6 +23,7 @@ export interface ConversationStarters {
 }
 
 export interface SnapshotResult {
+  companyProfile: CompanyProfile;
   signals: SnapshotSignals;
   insights: string[];
   conversationStarters: ConversationStarters;
@@ -33,11 +41,13 @@ const signalSections = [
 const personaLabels: { key: keyof ConversationStarters; label: string; emoji: string }[] = [
   { key: "ceo", label: "CEO", emoji: "👔" },
   { key: "cto", label: "CTO", emoji: "⚙️" },
-  { key: "headOfOperations", label: "Head of Operations", emoji: "📋" },
+  { key: "headOfOperations", label: "Head of Ops", emoji: "📋" },
   { key: "headOfSales", label: "Head of Sales", emoji: "📈" },
 ];
 
 const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
+  const profile = data.companyProfile;
+
   return (
     <section className="py-12 px-4">
       <div className="max-w-3xl mx-auto bg-card rounded-2xl shadow-card border border-border overflow-hidden">
@@ -50,6 +60,53 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
         </div>
 
         <div className="divide-y divide-border">
+          {/* Company Profile Summary */}
+          {profile && (
+            <div className="px-8 py-6">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                Company Profile
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4">
+                <div className="flex items-start gap-2">
+                  <Building2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Industry</p>
+                    <p className="text-sm font-medium text-foreground">{profile.industry}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <Users className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Size</p>
+                    <p className="text-sm font-medium text-foreground">{profile.companySize}</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2 col-span-2 sm:col-span-1">
+                  <Volume2 className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Tone</p>
+                    <p className="text-sm font-medium text-foreground">{profile.tone}</p>
+                  </div>
+                </div>
+              </div>
+              {profile.keywords?.length > 0 && (
+                <div className="flex items-start gap-2">
+                  <Hash className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
+                  <div className="flex flex-wrap gap-1.5">
+                    {profile.keywords.map((kw, i) => (
+                      <span
+                        key={i}
+                        className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-medium"
+                      >
+                        {kw}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Signals Grid */}
           <div className="px-8 py-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
