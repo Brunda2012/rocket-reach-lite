@@ -99,7 +99,7 @@ Input: Raw text scraped from multiple pages of the company's website (homepage, 
 Task:
 - Extract structured signals: hiring signals, tech stack, strategic initiatives, pain points, and growth indicators.
 - Extract 3 concise, high-value insights about the company's focus, strategy, or priorities.
-- Write 1 personalized conversation starter that references the signals and insights.
+- Write 4 personalized conversation starters, each tailored to a specific persona: CTO, CEO, Head of Operations, and Head of Sales. Each should reference relevant signals for that role.
 - Write 1 sentence explaining why this matters to them.
 Keep everything short, specific, and non-salesy.`,
           },
@@ -155,9 +155,17 @@ Keep everything short, specific, and non-salesy.`,
                     items: { type: "string" },
                     description: "Exactly 3 key company insights as strings",
                   },
-                  conversationStarter: {
-                    type: "string",
-                    description: "A natural, non-salesy conversation opener referencing specific signals",
+                  conversationStarters: {
+                    type: "object",
+                    description: "4 conversation starters tailored to specific personas",
+                    properties: {
+                      cto: { type: "string", description: "Conversation starter for a CTO — focus on tech, architecture, engineering" },
+                      ceo: { type: "string", description: "Conversation starter for a CEO — focus on strategy, growth, vision" },
+                      headOfOperations: { type: "string", description: "Conversation starter for Head of Operations — focus on efficiency, process, scale" },
+                      headOfSales: { type: "string", description: "Conversation starter for Head of Sales — focus on pipeline, revenue, market expansion" },
+                    },
+                    required: ["cto", "ceo", "headOfOperations", "headOfSales"],
+                    additionalProperties: false,
                   },
                   whyItMatters: {
                     type: "string",
