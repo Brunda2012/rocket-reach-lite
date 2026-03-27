@@ -250,7 +250,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         </div>
 
         {profile && (
-          <div className="animate-fade-in-up stagger-1 bg-card rounded-2xl shadow-card border border-border overflow-hidden">
+          <div className="animate-fade-in-up stagger-1 bg-card rounded-xl shadow-card border border-border overflow-hidden">
             <div className="gradient-subtle p-6">
               <SectionHeader icon={Building2} title="Company Profile" />
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
@@ -292,7 +292,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
 
         {/* ── Recent Changes ── */}
         {data.recentChanges?.length > 0 && (
-          <div className="animate-fade-in-up stagger-2 bg-card rounded-2xl shadow-card border border-border p-6">
+          <div className="animate-fade-in-up stagger-2 bg-card rounded-xl shadow-card border border-border p-6">
             <SectionHeader icon={Zap} title="What's New" accent="bg-warning/10 text-warning" />
             <div className="grid gap-2.5">
               {data.recentChanges.map((change, i) => (
@@ -318,7 +318,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
               const items = data.signals?.[key];
               if (!items || items.length === 0) return null;
               return (
-                <div key={key} className="bg-card rounded-2xl shadow-card border border-border p-5 hover:shadow-elevated transition-all duration-300 group">
+                <div key={key} className="bg-card rounded-xl shadow-card border border-border p-5 hover:shadow-elevated transition-all duration-300 group">
                   <div className="flex items-center gap-2 mb-3">
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent}`}>
                       <Icon className="w-3.5 h-3.5" />
@@ -340,7 +340,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         </div>
 
         {/* ── Key Insights ── */}
-        <div className="animate-fade-in-up stagger-4 bg-card rounded-2xl shadow-card border border-border p-6">
+        <div className="animate-fade-in-up stagger-4 bg-card rounded-xl shadow-card border border-border p-6">
           <SectionHeader icon={CheckCircle} title="Key Insights" accent="bg-success/10 text-success" />
           <div className="space-y-3">
             {data.insights.map((insight, i) => (
@@ -369,7 +369,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
               return (
                 <div
                   key={key}
-                  className="bg-card rounded-2xl shadow-card border border-border p-5 hover:shadow-elevated hover:border-primary/20 transition-all duration-300 group relative"
+                  className="bg-card rounded-xl shadow-card border border-border p-5 hover:shadow-elevated hover:border-primary/20 transition-all duration-300 group relative"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -387,7 +387,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
 
         {/* ── Public Contacts ── */}
         {data.publicContacts && (data.publicContacts.emails?.length > 0 || data.publicContacts.phones?.length > 0 || data.publicContacts.formUrls?.length > 0) && (
-          <div className="animate-fade-in-up stagger-6 bg-card rounded-2xl shadow-card border border-border p-6">
+          <div className="animate-fade-in-up stagger-6 bg-card rounded-xl shadow-card border border-border p-6">
             <SectionHeader icon={Mail} title="Public Contacts" accent="bg-info/10 text-info" />
             <div className="grid gap-4 sm:grid-cols-3">
               {data.publicContacts.emails?.length > 0 && (
@@ -428,7 +428,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         )}
 
         {/* ── Outreach Email Generator ── */}
-        <div className="animate-fade-in-up stagger-7 bg-card rounded-2xl shadow-card border border-border p-6">
+        <div className="animate-fade-in-up stagger-7 bg-card rounded-xl shadow-card border border-border p-6">
           <SectionHeader icon={Send} title="Outreach Email" accent="bg-primary/10 text-primary" />
           {!outreach ? (
             <Button
@@ -499,7 +499,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         </div>
 
         {/* ── Why This Matters ── */}
-        <div className="animate-fade-in-up stagger-8 gradient-primary rounded-2xl p-6 shadow-glow">
+        <div className="animate-fade-in-up stagger-8 gradient-primary rounded-xl p-6 shadow-glow">
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-8 h-8 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <Target className="w-4 h-4 text-primary-foreground" />
