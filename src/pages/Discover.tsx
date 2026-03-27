@@ -1,18 +1,28 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Globe, ArrowRight, BarChart3, Loader2 } from "lucide-react";
+import { Search, Loader2, Globe } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import TopNav from "@/components/TopNav";
 import CompanyDiscovery from "@/components/CompanyDiscovery";
-import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { SnapshotResult } from "@/components/SnapshotDisplay";
+
+const COUNTRIES = [
+  "All Countries", "United States", "United Kingdom", "India", "Germany", "France",
+  "Canada", "Australia", "Japan", "South Korea", "China", "Brazil", "Mexico",
+  "Netherlands", "Sweden", "Denmark", "Norway", "Finland", "Switzerland",
+  "Singapore", "Israel", "UAE", "South Africa", "Nigeria", "Kenya",
+  "Ireland", "Spain", "Italy", "Poland", "Indonesia", "Thailand", "Vietnam",
+  "New Zealand", "Austria", "Belgium", "Czech Republic", "Portugal", "Argentina",
+  "Chile", "Colombia", "Egypt", "Saudi Arabia", "Turkey", "Malaysia", "Philippines",
+];
 
 const Discover = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [country, setCountry] = useState("All Countries");
 
   const handleSelectCompanies = async (urls: string[], theme?: string) => {
     setIsAnalyzing(true);
@@ -50,7 +60,7 @@ const Discover = () => {
 
   return (
     <DashboardLayout>
-      <TopNav title="Discover" description="Find companies by theme or interest" />
+      <TopNav title="Discover" description="Find companies by theme, interest, or country" />
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto p-6 space-y-6">
           <div className="bg-card rounded-xl border border-border shadow-card p-8 text-center">
@@ -59,15 +69,33 @@ const Discover = () => {
             </div>
             <h2 className="text-xl font-bold text-foreground mb-2">Discover Companies</h2>
             <p className="text-sm text-muted-foreground max-w-md mx-auto mb-6">
-              Describe your ideal customer profile — industry, tech stack, stage, or any theme — and we'll find matching prospects.
+              Describe your ideal prospect — industry, tech stack, stage, or theme — and AI will find matching companies.
             </p>
+
+            {/* Country Filter */}
+            <div className="flex items-center justify-center gap-2 mb-5">
+              <Globe className="w-4 h-4 text-muted-foreground" />
+              <select
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="bg-secondary/50 border border-border rounded-lg text-sm px-3 py-1.5 text-foreground outline-none focus:border-primary/30"
+              >
+                {COUNTRIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
             {isAnalyzing && (
               <div className="flex items-center justify-center gap-2 mb-4 text-sm text-muted-foreground">
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Analyzing selected companies...
               </div>
             )}
-            <CompanyDiscovery onSelectCompanies={handleSelectCompanies} />
+            <CompanyDiscovery
+              onSelectCompanies={handleSelectCompanies}
+              country={country === "All Countries" ? undefined : country}
+            />
           </div>
         </div>
       </main>

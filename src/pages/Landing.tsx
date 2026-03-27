@@ -1,6 +1,20 @@
-import { ArrowRight, Sparkles, Search, Zap, TrendingUp, Shield, BarChart3, Mail } from "lucide-react";
+import {
+  ArrowRight, Sparkles, Search, Zap, TrendingUp, Shield, BarChart3, Mail,
+  Users, Phone, Settings, Layers, Globe, Send, HelpCircle,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+
+const features = [
+  { icon: Search, title: "Discover Companies", desc: "Enter a theme or interest and let AI find matching companies worldwide. Filter by country." },
+  { icon: BarChart3, title: "Insights Engine", desc: "Deep analysis of company websites — signals, pain points, growth indicators, tech stack, and more." },
+  { icon: Users, title: 'Organisation Relevance ("Helpful For")', desc: "Each company is classified by who it's most useful for: startups, students, founders, investors, etc." },
+  { icon: Phone, title: "Public Contact Intelligence", desc: "Extract publicly available emails, phone numbers, addresses, and contact form URLs from company websites." },
+  { icon: Send, title: "Outreach Email Generator", desc: "AI-crafted personalized cold emails with subject lines, CTAs, relevance scores, and recommended recipients." },
+  { icon: Mail, title: "Email Pack", desc: "All generated emails in one place — collapsible cards with copy buttons and a 'Copy All' feature." },
+  { icon: Layers, title: "Comparison Dashboard", desc: "Select multiple companies and compare them side-by-side: signals, scores, contacts, and helpfulness." },
+  { icon: Settings, title: "Settings & Personalization", desc: "Configure email tone, length, subject style, dark mode, and toggle data features on or off." },
+];
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -16,9 +30,14 @@ const Landing = () => {
             </div>
             <span className="text-sm font-bold text-foreground tracking-tight">ProspectAI</span>
           </div>
-          <Button size="sm" onClick={() => navigate("/dashboard")} className="gap-1.5">
-            Start Now <ArrowRight className="w-3.5 h-3.5" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="ghost" onClick={() => navigate("/help")} className="gap-1.5">
+              <HelpCircle className="w-3.5 h-3.5" /> Help
+            </Button>
+            <Button size="sm" onClick={() => navigate("/discover")} className="gap-1.5">
+              Start Now <ArrowRight className="w-3.5 h-3.5" />
+            </Button>
+          </div>
         </div>
       </nav>
 
@@ -26,20 +45,21 @@ const Landing = () => {
       <section className="max-w-6xl mx-auto px-6 pt-20 pb-16 text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/8 text-primary text-xs font-medium border border-primary/10 mb-6">
           <Sparkles className="w-3 h-3" />
-          AI-Powered Prospect Intelligence
+          HealthTech Hackathon Edition
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-foreground leading-tight tracking-tight max-w-3xl mx-auto">
-          HEALTHTECH HACKATHON
+          AI-Powered Prospect Intelligence{" "}
+          <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">& Outreach Platform</span>
         </h1>
         <p className="mt-5 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
-          Paste a website, get instant AI-generated insights — key signals, personalized conversation starters, and ready-to-send outreach emails.
+          Discover companies by theme, analyse their websites for strategic signals, generate personalised outreach emails, and manage your prospect pipeline — all powered by AI.
         </p>
         <div className="mt-8 flex items-center justify-center gap-3">
-          <Button size="lg" onClick={() => navigate("/dashboard")} className="gap-2 text-sm px-6">
-            Start Now <ArrowRight className="w-4 h-4" />
+          <Button size="lg" onClick={() => navigate("/discover")} className="gap-2 text-sm px-6">
+            Start Discovering <ArrowRight className="w-4 h-4" />
           </Button>
           <Button size="lg" variant="outline" onClick={() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" })} className="text-sm px-6">
-            See How It Works
+            See All Features
           </Button>
         </div>
 
@@ -59,20 +79,39 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features */}
-      <section id="features" className="max-w-6xl mx-auto px-6 py-16">
+      {/* What's Inside */}
+      <section className="max-w-6xl mx-auto px-6 pb-8">
+        <div className="bg-card rounded-2xl border border-border shadow-card p-6">
+          <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <Globe className="w-4 h-4 text-primary" /> What's Inside This App
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {[
+              { icon: Search, label: "AI Discovery" },
+              { icon: BarChart3, label: "Deep Insights" },
+              { icon: Send, label: "Email Outreach" },
+              { icon: Users, label: "Relevance Tags" },
+              { icon: Phone, label: "Contact Intel" },
+              { icon: Layers, label: "Side-by-Side" },
+              { icon: Globe, label: "Country Filter" },
+              { icon: Shield, label: "Scoring" },
+            ].map(({ icon: Icon, label }) => (
+              <div key={label} className="flex items-center gap-2 text-xs text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2 border border-border">
+                <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                {label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Feature Cards */}
+      <section id="features" className="max-w-6xl mx-auto px-6 py-12">
         <h2 className="text-2xl font-bold text-foreground text-center mb-10 tracking-tight">
           Everything you need to prospect smarter
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            { icon: Search, title: "Company Intelligence", desc: "Automatically extract industry, size, tech stack, and strategic signals from any website." },
-            { icon: BarChart3, title: "Comparison Board", desc: "Analyze multiple companies side-by-side and identify the best-fit prospects instantly." },
-            { icon: Mail, title: "Outreach Emails", desc: "AI-crafted, personalized outreach emails with subject lines, CTAs, and relevance scoring." },
-            { icon: TrendingUp, title: "Growth Signals", desc: "Detect hiring trends, funding rounds, product launches, and expansion indicators." },
-            { icon: Shield, title: "Confidence Scoring", desc: "Every insight comes with a confidence score so you know what to trust." },
-            { icon: Sparkles, title: "AI Discovery", desc: "Describe your ideal customer and let AI find matching companies for you." },
-          ].map(({ icon: Icon, title, desc }) => (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {features.map(({ icon: Icon, title, desc }) => (
             <div key={title} className="bg-card rounded-xl border border-border shadow-card p-5 hover:shadow-elevated transition-shadow">
               <div className="w-8 h-8 rounded-lg bg-primary/8 flex items-center justify-center mb-3">
                 <Icon className="w-4 h-4 text-primary" />
@@ -85,13 +124,13 @@ const Landing = () => {
       </section>
 
       {/* CTA */}
-      <section className="max-w-6xl mx-auto px-6 py-16">
+      <section className="max-w-6xl mx-auto px-6 py-12">
         <div className="gradient-primary rounded-2xl p-10 text-center">
-          <h2 className="text-2xl font-bold text-primary-foreground mb-3">Ready to close more deals?</h2>
+          <h2 className="text-2xl font-bold text-primary-foreground mb-3">Ready to find your next opportunity?</h2>
           <p className="text-sm text-primary-foreground/80 max-w-md mx-auto mb-6">
-            Start analyzing prospects in seconds — no signup required.
+            Start discovering and analysing companies in seconds — no signup required.
           </p>
-          <Button size="lg" variant="secondary" onClick={() => navigate("/dashboard")} className="gap-2 text-sm px-6">
+          <Button size="lg" variant="secondary" onClick={() => navigate("/discover")} className="gap-2 text-sm px-6">
             Start Now <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
@@ -99,7 +138,12 @@ const Landing = () => {
 
       {/* Footer */}
       <footer className="border-t border-border py-6">
-        <p className="text-center text-xs text-muted-foreground">© {new Date().getFullYear()} ProspectAI. Built with intelligence.</p>
+        <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} ProspectAI · v1.0.0 · HealthTech Hackathon</p>
+          <Button variant="ghost" size="sm" className="text-xs gap-1.5 text-muted-foreground" onClick={() => navigate("/help")}>
+            <HelpCircle className="w-3 h-3" /> Help
+          </Button>
+        </div>
       </footer>
     </div>
   );
