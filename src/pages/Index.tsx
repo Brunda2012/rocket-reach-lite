@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import CompanyInput from "@/components/CompanyInput";
+import CompanyDiscovery from "@/components/CompanyDiscovery";
 import SnapshotDisplay, { type SnapshotResult } from "@/components/SnapshotDisplay";
 import ComparisonBoard from "@/components/ComparisonBoard";
 import { useToast } from "@/hooks/use-toast";
@@ -49,10 +50,16 @@ const Index = () => {
     }
   };
 
+  const handleDiscoverySelect = (urls: string[]) => {
+    handleGenerate(urls);
+    inputRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <HeroSection onScrollToInput={scrollToInput} />
       <CompanyInput ref={inputRef} onSubmit={handleGenerate} isLoading={isLoading} />
+      <CompanyDiscovery onSelectCompanies={handleDiscoverySelect} />
       {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} />}
       {snapshots.length >= 2 && <ComparisonBoard snapshots={snapshots} />}
     </div>
