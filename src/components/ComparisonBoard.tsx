@@ -306,17 +306,34 @@ const ComparisonBoard = ({ snapshots }: { snapshots: SnapshotResult[] }) => {
           </div>
         </div>
 
-        {/* ── Confidence Score ── */}
+        {/* ── Scores ── */}
         <div className="animate-fade-in-up stagger-5 bg-card rounded-2xl shadow-card border border-border overflow-hidden">
           <div className="gradient-subtle p-4 border-b border-border">
-            <SectionLabel icon={Target} label="Confidence Score" accent="bg-success/10 text-success" />
+            <SectionLabel icon={Target} label="Scores" accent="bg-success/10 text-success" />
           </div>
-          <div className={`grid ${gridCols} divide-x divide-border`}>
-            {snapshots.map((s, i) => (
-              <div key={i} className="p-5 flex justify-center">
-                <ScoreBadge score={s.confidenceScore ?? 0} />
-              </div>
-            ))}
+          <div className="border-b border-border">
+            <div className="px-5 pt-3 pb-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Confidence</span>
+            </div>
+            <div className={`grid ${gridCols} divide-x divide-border`}>
+              {snapshots.map((s, i) => (
+                <div key={i} className="p-4 flex justify-center">
+                  <ScoreBadge score={s.confidenceScore ?? 0} />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <div className="px-5 pt-3 pb-1">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Suitability</span>
+            </div>
+            <div className={`grid ${gridCols} divide-x divide-border`}>
+              {snapshots.map((s, i) => (
+                <div key={i} className="p-4 flex justify-center">
+                  <ScoreBadge score={s.suitabilityScore ?? 0} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
