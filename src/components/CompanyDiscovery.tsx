@@ -12,9 +12,11 @@ interface DiscoveredCompany {
 
 interface CompanyDiscoveryProps {
   onSelectCompanies: (urls: string[], theme?: string) => void;
+  country?: string;
+}
 }
 
-const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
+const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps) => {
   const [theme, setTheme] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [companies, setCompanies] = useState<DiscoveredCompany[]>([]);
@@ -29,7 +31,7 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
 
     try {
       const { data, error } = await supabase.functions.invoke("discover-companies", {
-        body: { theme: theme.trim() },
+        body: { theme: theme.trim(), country },
       });
       if (error) throw error;
       if (data?.companies) {
