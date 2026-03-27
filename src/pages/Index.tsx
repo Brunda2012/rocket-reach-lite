@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import CompanyInput from "@/components/CompanyInput";
 import SnapshotDisplay, { type SnapshotResult } from "@/components/SnapshotDisplay";
+import ComparisonBoard from "@/components/ComparisonBoard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,12 +27,13 @@ const Index = () => {
             body: { url, linkedinUrl },
           });
           if (error) throw new Error(`Failed for ${url}: ${error.message}`);
-          if (!data?.insights) throw new Error(data?.error || `Analysis failed for ${url}`);
+          if (!data?.conversationStarters && !data?.insights)
+            throw new Error(data?.error || `Analysis failed for ${url}`);
           return {
             companyProfile: data.companyProfile || {},
             signals: data.signals || {},
             recentChanges: data.recentChanges || [],
-            insights: data.insights,
+            insights: data.insights || [],
             conversationStarters: data.conversationStarters || {},
             whyItMatters: data.whyItMatters,
             confidenceScore: data.confidenceScore ?? 0,
@@ -51,9 +53,8 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <HeroSection onScrollToInput={scrollToInput} />
       <CompanyInput ref={inputRef} onSubmit={handleGenerate} isLoading={isLoading} />
-      {snapshots.map((snapshot, i) => (
-        <SnapshotDisplay key={i} data={snapshot} />
-      ))}
+      {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} />}
+      {snapshots.length >= 2 && <ComparisonBoard snapshots={snapshots} />}
     </div>
   );
 };
