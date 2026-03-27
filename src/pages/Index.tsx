@@ -30,7 +30,7 @@ const Index = () => {
         setSnapshot({
           signals: data.signals || {},
           insights: data.insights,
-          conversationStarter: data.conversationStarter,
+          conversationStarters: data.conversationStarters || {},
           whyItMatters: data.whyItMatters,
         });
       } else {

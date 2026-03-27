@@ -1,4 +1,4 @@
-import { MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code, Rocket, AlertTriangle, TrendingUp } from "lucide-react";
+import { MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code, Rocket, AlertTriangle, TrendingUp, User } from "lucide-react";
 
 export interface SnapshotSignals {
   hiringSignals: string[];
@@ -8,10 +8,17 @@ export interface SnapshotSignals {
   growthIndicators: string[];
 }
 
+export interface ConversationStarters {
+  cto: string;
+  ceo: string;
+  headOfOperations: string;
+  headOfSales: string;
+}
+
 export interface SnapshotResult {
   signals: SnapshotSignals;
   insights: string[];
-  conversationStarter: string;
+  conversationStarters: ConversationStarters;
   whyItMatters: string;
 }
 
@@ -21,6 +28,13 @@ const signalSections = [
   { key: "strategicInitiatives" as const, label: "Strategic Initiatives", icon: Rocket, color: "text-primary" },
   { key: "painPoints" as const, label: "Pain Points", icon: AlertTriangle, color: "text-destructive" },
   { key: "growthIndicators" as const, label: "Growth Indicators", icon: TrendingUp, color: "text-accent" },
+];
+
+const personaLabels: { key: keyof ConversationStarters; label: string; emoji: string }[] = [
+  { key: "ceo", label: "CEO", emoji: "👔" },
+  { key: "cto", label: "CTO", emoji: "⚙️" },
+  { key: "headOfOperations", label: "Head of Operations", emoji: "📋" },
+  { key: "headOfSales", label: "Head of Sales", emoji: "📈" },
 ];
 
 const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
@@ -77,18 +91,28 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
             </ul>
           </div>
 
-          {/* Conversation Starter */}
+          {/* Conversation Starters by Persona */}
           <div className="px-8 py-6">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-4">
               <MessageSquare className="w-4 h-4 text-primary" />
               <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
-                Conversation Starter
+                Conversation Starters
               </h3>
             </div>
-            <div className="bg-primary/5 border border-primary/15 rounded-xl px-5 py-4">
-              <p className="text-foreground/90 italic leading-relaxed">
-                "{data.conversationStarter}"
-              </p>
+            <div className="grid gap-3 sm:grid-cols-2">
+              {personaLabels.map(({ key, label, emoji }) => {
+                const text = data.conversationStarters?.[key];
+                if (!text) return null;
+                return (
+                  <div key={key} className="bg-primary/5 border border-primary/15 rounded-xl px-5 py-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-base">{emoji}</span>
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+                    </div>
+                    <p className="text-foreground/90 italic leading-relaxed text-sm">"{text}"</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

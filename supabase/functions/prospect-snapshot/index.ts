@@ -209,7 +209,7 @@ Keep everything short, specific, and non-salesy.`,
       return new Response(JSON.stringify({
         signals: result.signals,
         insights: result.insights,
-        conversationStarter: result.conversationStarter,
+        conversationStarters: result.conversationStarters,
         whyItMatters: result.whyItMatters,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
