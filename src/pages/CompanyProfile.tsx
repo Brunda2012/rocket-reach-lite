@@ -127,6 +127,45 @@ const CompanyProfilePage = () => {
             <ScoreBadge label="Suitability" score={data.suitabilityScore ?? 0} icon={BarChart3} />
           </div>
 
+          {/* Key People */}
+          {data.keyPeople && data.keyPeople.length > 0 && (
+            <div className="bg-card rounded-xl border border-border shadow-card p-6 animate-fade-in-up stagger-2">
+              <div className="flex items-center gap-2.5 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Users className="w-4 h-4 text-primary" />
+                </div>
+                <h2 className="text-sm font-semibold text-foreground">Key People</h2>
+                <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">{data.keyPeople.length}</span>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {data.keyPeople.map((person, i) => (
+                  <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-secondary/40 border border-border hover:shadow-sm transition-shadow">
+                    <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <UserCircle className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-foreground truncate">{person.name}</p>
+                      <p className="text-[11px] text-muted-foreground">{person.role}</p>
+                      <div className="mt-1.5 flex flex-wrap gap-2">
+                        {person.email && (
+                          <a href={`mailto:${person.email}`} className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline">
+                            <Mail className="w-3 h-3" /> {person.email}
+                          </a>
+                        )}
+                        {person.linkedinUrl && (
+                          <a href={person.linkedinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[11px] text-primary hover:underline">
+                            <Linkedin className="w-3 h-3" /> LinkedIn
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                    {person.email && <CopyBtn text={person.email} />}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Recent Changes */}
           {data.recentChanges?.length > 0 && (
             <div className="bg-card rounded-xl border border-border shadow-card p-6 animate-fade-in-up stagger-2">
