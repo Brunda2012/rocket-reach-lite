@@ -1,13 +1,13 @@
 import { useRef, useState } from "react";
 import HeroSection from "@/components/HeroSection";
 import CompanyInput from "@/components/CompanyInput";
-import InsightCard, { type ProspectInsight } from "@/components/InsightCard";
+import SnapshotDisplay, { type SnapshotResult } from "@/components/SnapshotDisplay";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [insight, setInsight] = useState<ProspectInsight | null>(null);
+  const [snapshot, setSnapshot] = useState<SnapshotResult | null>(null);
   const inputRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -15,9 +15,9 @@ const Index = () => {
     inputRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleAnalyze = async (url: string) => {
+  const handleGenerate = async (url: string) => {
     setIsLoading(true);
-    setInsight(null);
+    setSnapshot(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("prospect-snapshot", {
@@ -27,19 +27,8 @@ const Index = () => {
       if (error) throw error;
 
       if (data?.insights) {
-        // Map the flat response into the UI format
-        const hostname = new URL(url.startsWith("http") ? url : `https://${url}`).hostname;
-        const companyName = hostname.replace("www.", "").split(".")[0];
-
-        const icons = ["trending", "users", "building"];
-        setInsight({
-          companyName: companyName.charAt(0).toUpperCase() + companyName.slice(1),
-          summary: "",
-          insights: data.insights.map((text: string, i: number) => ({
-            icon: icons[i] || "lightbulb",
-            title: text.split(/[.–—:]/)[0].trim().slice(0, 40),
-            detail: text,
-          })),
+        setSnapshot({
+          insights: data.insights,
           conversationStarter: data.conversationStarter,
           whyItMatters: data.whyItMatters,
         });
@@ -48,7 +37,7 @@ const Index = () => {
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Could not analyze this URL.";
-      toast({ title: "Analysis Error", description: message, variant: "destructive" });
+      toast({ title: "Error", description: message, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -57,8 +46,8 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       <HeroSection onScrollToInput={scrollToInput} />
-      <CompanyInput ref={inputRef} onSubmit={handleAnalyze} isLoading={isLoading} />
-      {insight && <InsightCard data={insight} />}
+      <CompanyInput ref={inputRef} onSubmit={handleGenerate} isLoading={isLoading} />
+      {snapshot && <SnapshotDisplay data={snapshot} />}
     </div>
   );
 };
