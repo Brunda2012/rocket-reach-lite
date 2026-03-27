@@ -87,22 +87,46 @@ const OutreachDashboard = ({
   const allGenerated = entries.every((e) => e.outreach);
   const anyLoading = entries.some((e) => e.loading);
 
+  const generatedEntries = entries.filter((e) => e.outreach);
+
+  const [copiedPack, setCopiedPack] = useState(false);
+  const copyOutreachPack = async () => {
+    const block = generatedEntries
+      .map((e, i) => {
+        const o = e.outreach!;
+        const domain = e.url.replace(/^https?:\/\//, "").replace(/\/+$/, "");
+        return `--- Company ${i + 1}: ${domain} ---\nTo: ${o.recommendedRecipient}\nSubject: ${o.subject}\nRelevance: ${o.relevanceScore}/100\n\n${o.emailBody}`;
+      })
+      .join("\n\n========================================\n\n");
+    await navigator.clipboard.writeText(`=== OUTREACH PACK ===\n${generatedEntries.length} emails generated\n\n${block}`);
+    setCopiedPack(true);
+    setTimeout(() => setCopiedPack(false), 2000);
+  };
+
   return (
     <section className="py-16 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
           <div>
             <h2 className="text-2xl font-bold text-foreground">Outreach Dashboard</h2>
             <p className="text-sm text-muted-foreground mt-1">
               {snapshots.length} {snapshots.length === 1 ? "company" : "companies"} analyzed
             </p>
           </div>
-          {!allGenerated && (
-            <Button onClick={generateAll} disabled={anyLoading} className="gap-2 gradient-primary text-primary-foreground">
-              {anyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              Generate All Emails
-            </Button>
-          )}
+          <div className="flex gap-2">
+            {generatedEntries.length >= 1 && (
+              <Button variant="outline" onClick={copyOutreachPack} className="gap-2">
+                {copiedPack ? <Check className="w-4 h-4 text-success" /> : <ClipboardList className="w-4 h-4" />}
+                {copiedPack ? "Copied!" : "Copy Outreach Pack"}
+              </Button>
+            )}
+            {!allGenerated && (
+              <Button onClick={generateAll} disabled={anyLoading} className="gap-2 gradient-primary text-primary-foreground">
+                {anyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                Generate All Emails
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="grid gap-5">
