@@ -47,28 +47,26 @@ const CompanyInput = forwardRef<HTMLDivElement, CompanyInputProps>(
     const hasValidUrl = entries.some((e) => e.url.trim().length > 0);
 
     return (
-      <section ref={ref} className="py-16 px-4">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-foreground text-center mb-2">
-            Enter Company URLs
-          </h2>
-          <p className="text-muted-foreground text-center mb-8">
-            Add up to {MAX_URLS} companies to analyze. We'll generate a prospect intelligence card for each.
-          </p>
+      <div ref={ref} className="animate-fade-in-up stagger-1">
+        <div className="bg-card rounded-xl border border-border shadow-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">Company URLs</h3>
+              <p className="text-xs text-muted-foreground mt-0.5">Add up to {MAX_URLS} companies to analyze</p>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {entries.map((entry, index) => (
-              <div key={index} className="space-y-2">
-                <div className="flex items-center gap-2 bg-card rounded-2xl shadow-card border border-border p-2 focus-within:shadow-elevated transition-shadow">
-                  <div className="pl-3">
-                    <Globe className="w-5 h-5 text-muted-foreground" />
-                  </div>
+              <div key={index} className="space-y-1.5">
+                <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border px-3 py-2 focus-within:border-primary/30 focus-within:shadow-sm transition-all">
+                  <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
                   <input
                     type="text"
                     value={entry.url}
                     onChange={(e) => updateUrl(index, e.target.value)}
                     placeholder={`https://company${entries.length > 1 ? `-${index + 1}` : ""}.com`}
-                    className="flex-1 bg-transparent text-foreground text-lg placeholder:text-muted-foreground/50 outline-none py-3"
+                    className="flex-1 bg-transparent text-foreground text-sm placeholder:text-muted-foreground/50 outline-none"
                     disabled={isLoading}
                   />
                   {entries.length > MIN_URLS && (
@@ -76,22 +74,20 @@ const CompanyInput = forwardRef<HTMLDivElement, CompanyInputProps>(
                       type="button"
                       onClick={() => removeUrl(index)}
                       disabled={isLoading}
-                      className="p-2 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                      className="p-1 rounded text-muted-foreground hover:text-destructive transition-colors"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3.5 h-3.5" />
                     </button>
                   )}
                 </div>
-                <div className="flex items-center gap-2 bg-card rounded-2xl shadow-card border border-border p-2 focus-within:shadow-elevated transition-shadow ml-6">
-                  <div className="pl-3">
-                    <Mail className="w-4 h-4 text-muted-foreground" />
-                  </div>
+                <div className="flex items-center gap-2 bg-secondary/30 rounded-lg border border-border/60 px-3 py-1.5 ml-5 focus-within:border-primary/20 transition-all">
+                  <Mail className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
                   <input
                     type="email"
                     value={entry.prospectEmail}
                     onChange={(e) => updateEmail(index, e.target.value)}
                     placeholder="prospect@company.com (optional)"
-                    className="flex-1 bg-transparent text-foreground text-sm placeholder:text-muted-foreground/50 outline-none py-2"
+                    className="flex-1 bg-transparent text-foreground text-xs placeholder:text-muted-foreground/50 outline-none"
                     disabled={isLoading}
                   />
                 </div>
@@ -99,37 +95,33 @@ const CompanyInput = forwardRef<HTMLDivElement, CompanyInputProps>(
             ))}
 
             {entries.length < MAX_URLS && (
-              <Button
+              <button
                 type="button"
-                variant="outline"
-                size="sm"
                 onClick={addUrl}
                 disabled={isLoading}
-                className="w-full gap-2 rounded-2xl border-dashed"
+                className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg border border-dashed border-border text-xs text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
               >
-                <Plus className="w-4 h-4" />
-                Add another company ({entries.length}/{MAX_URLS})
-              </Button>
+                <Plus className="w-3.5 h-3.5" />
+                Add company ({entries.length}/{MAX_URLS})
+              </button>
             )}
 
-            <div className="flex items-center gap-2 bg-card rounded-2xl shadow-card border border-border p-2 focus-within:shadow-elevated transition-shadow">
-              <div className="pl-3">
-                <Linkedin className="w-5 h-5 text-muted-foreground" />
-              </div>
+            <div className="flex items-center gap-2 bg-secondary/50 rounded-lg border border-border px-3 py-2 focus-within:border-primary/30 transition-all">
+              <Linkedin className="w-4 h-4 text-muted-foreground shrink-0" />
               <input
                 type="text"
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
-                placeholder="https://linkedin.com/company/... (optional)"
-                className="flex-1 bg-transparent text-foreground text-lg placeholder:text-muted-foreground/50 outline-none py-3"
+                placeholder="LinkedIn company URL (optional)"
+                className="flex-1 bg-transparent text-foreground text-sm placeholder:text-muted-foreground/50 outline-none"
                 disabled={isLoading}
               />
             </div>
 
-            <button
+            <Button
               type="submit"
               disabled={!hasValidUrl || isLoading}
-              className="w-full gradient-primary text-primary-foreground px-6 py-4 rounded-2xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+              className="w-full gap-2"
             >
               {isLoading ? (
                 <>
@@ -142,10 +134,10 @@ const CompanyInput = forwardRef<HTMLDivElement, CompanyInputProps>(
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
-            </button>
+            </Button>
           </form>
         </div>
-      </section>
+      </div>
     );
   }
 );

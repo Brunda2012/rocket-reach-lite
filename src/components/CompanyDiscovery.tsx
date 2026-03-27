@@ -57,45 +57,39 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
   };
 
   return (
-    <section className="py-10 px-4">
-      <div className="max-w-3xl mx-auto">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-primary" />
+    <div className="animate-fade-in-up stagger-2">
+      <div className="bg-card rounded-xl border border-border shadow-card p-6">
+        <div className="flex items-center gap-2.5 mb-4">
+          <div className="w-7 h-7 rounded-lg bg-primary/8 flex items-center justify-center">
+            <Sparkles className="w-3.5 h-3.5 text-primary" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-foreground">Discover Companies</h3>
-            <p className="text-xs text-muted-foreground">Enter an industry or theme to find prospects</p>
+            <h3 className="text-sm font-semibold text-foreground">Discover Companies</h3>
+            <p className="text-xs text-muted-foreground">Enter a theme to find matching prospects</p>
           </div>
         </div>
 
-        <form onSubmit={handleDiscover} className="flex gap-2 mb-6">
-          <div className="flex-1 flex items-center gap-3 bg-card rounded-2xl shadow-card border border-border p-2 focus-within:shadow-elevated transition-shadow">
-            <div className="pl-3">
-              <Search className="w-5 h-5 text-muted-foreground" />
-            </div>
+        <form onSubmit={handleDiscover} className="flex gap-2 mb-4">
+          <div className="flex-1 flex items-center gap-2 bg-secondary/50 rounded-lg border border-border px-3 py-2 focus-within:border-primary/30 transition-all">
+            <Search className="w-4 h-4 text-muted-foreground shrink-0" />
             <input
               type="text"
               value={theme}
               onChange={(e) => setTheme(e.target.value)}
               placeholder="e.g. health tech, AI infrastructure, fintech..."
-              className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground/50 outline-none py-3"
+              className="flex-1 bg-transparent text-foreground text-sm placeholder:text-muted-foreground/50 outline-none"
               disabled={isLoading}
             />
           </div>
-          <Button
-            type="submit"
-            disabled={!theme.trim() || isLoading}
-            className="rounded-2xl px-6 gap-2"
-          >
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            {isLoading ? "Searching..." : "Find Matching Companies"}
+          <Button type="submit" disabled={!theme.trim() || isLoading} size="sm" className="gap-1.5 shrink-0">
+            {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
+            {isLoading ? "Searching..." : "Find"}
           </Button>
         </form>
 
         {companies.length > 0 && (
           <>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid gap-2 sm:grid-cols-2">
               {companies.map((company, idx) => {
                 const isSelected = selected.has(idx);
                 return (
@@ -103,26 +97,26 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
                     key={idx}
                     type="button"
                     onClick={() => toggleSelect(idx)}
-                    className={`text-left p-4 rounded-2xl border transition-all duration-200 ${
+                    className={`text-left p-3.5 rounded-lg border transition-all duration-150 ${
                       isSelected
-                        ? "bg-primary/5 border-primary/30 shadow-elevated"
-                        : "bg-card border-border shadow-card hover:shadow-elevated hover:border-primary/15"
+                        ? "bg-primary/5 border-primary/25 shadow-sm"
+                        : "bg-secondary/30 border-border hover:bg-secondary/60 hover:border-border"
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2 mb-2">
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-colors ${
+                          className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-colors shrink-0 ${
                             isSelected ? "bg-primary border-primary" : "border-muted-foreground/30"
                           }`}
                         >
                           {isSelected && (
-                            <svg className="w-3 h-3 text-primary-foreground" viewBox="0 0 12 12" fill="none">
+                            <svg className="w-2.5 h-2.5 text-primary-foreground" viewBox="0 0 12 12" fill="none">
                               <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                             </svg>
                           )}
                         </div>
-                        <span className="text-sm font-semibold text-foreground">{company.name}</span>
+                        <span className="text-xs font-semibold text-foreground">{company.name}</span>
                       </div>
                       <a
                         href={company.website}
@@ -131,13 +125,13 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
                         onClick={(e) => e.stopPropagation()}
                         className="text-muted-foreground hover:text-primary transition-colors"
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
-                    <p className="text-xs text-foreground/70 leading-relaxed mb-2">{company.description}</p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed mb-1.5">{company.description}</p>
                     <div className="flex items-start gap-1.5">
-                      <Globe className="w-3 h-3 text-primary mt-0.5 shrink-0" />
-                      <span className="text-[11px] text-primary/80 leading-relaxed">{company.whyItMatches}</span>
+                      <Globe className="w-2.5 h-2.5 text-primary mt-0.5 shrink-0" />
+                      <span className="text-[10px] text-primary/80 leading-relaxed">{company.whyItMatches}</span>
                     </div>
                   </button>
                 );
@@ -145,21 +139,21 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
             </div>
 
             {selected.size > 0 && (
-              <div className="mt-6 flex justify-center">
-                <Button onClick={handleAnalyze} className="rounded-2xl px-8 gap-2">
+              <div className="mt-4 flex justify-center">
+                <Button onClick={handleAnalyze} size="sm" className="gap-1.5">
                   Analyze {selected.size} {selected.size === 1 ? "Company" : "Companies"}
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </Button>
               </div>
             )}
 
-            <p className="text-center text-xs text-muted-foreground mt-3">
+            <p className="text-center text-[10px] text-muted-foreground mt-2">
               Select up to 4 companies to analyze side-by-side
             </p>
           </>
         )}
       </div>
-    </section>
+    </div>
   );
 };
 
