@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { theme, country } = await req.json();
+    const { theme, country, regionCountries } = await req.json();
     if (!theme || typeof theme !== "string" || theme.trim().length === 0) {
       return new Response(JSON.stringify({ error: "theme is required" }), {
         status: 400,
@@ -20,6 +20,12 @@ serve(async (req) => {
       });
     }
     const countryFilter = country && typeof country === "string" ? country.trim() : null;
+    const regionList = Array.isArray(regionCountries) ? regionCountries : null;
+    const geoHint = countryFilter
+      ? `Focus on companies based in or operating primarily in ${countryFilter}.`
+      : regionList
+        ? `Focus on companies based in these countries: ${regionList.join(", ")}.`
+        : "";
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -40,11 +46,11 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a B2B sales research assistant. Given a theme or industry interest, suggest 8 companies that match.${countryFilter ? ` Focus on companies based in or operating primarily in ${countryFilter}.` : ""} Include a mix of well-known leaders and emerging/growing companies. For each company, provide its real name, actual website URL, a one-sentence description, the country it is based in, and a brief reason why it matches the theme. Be factual — only suggest real companies you are confident exist.`,
+            content: `You are a B2B sales research assistant. Given a theme or industry interest, suggest 8 companies that match.${geoHint ? ` ${geoHint}` : ""} Include a mix of well-known leaders and emerging/growing companies. For each company, provide its real name, actual website URL, a one-sentence description, the country it is based in, and a brief reason why it matches the theme. Be factual — only suggest real companies you are confident exist.`,
           },
           {
             role: "user",
-            content: `Find companies matching this theme: "${theme.trim()}"${countryFilter ? ` in ${countryFilter}` : ""}`,
+            content: `Find companies matching this theme: "${theme.trim()}"${countryFilter ? ` in ${countryFilter}` : regionList ? ` in ${regionList.join(", ")}` : ""}`,
           },
         ],
         tools: [

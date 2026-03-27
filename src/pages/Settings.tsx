@@ -265,6 +265,18 @@ const Settings = () => {
 
                     {id === "system" && (
                       <div className="space-y-4 pt-1">
+                        <div className="py-3 border-b border-border">
+                          <p className="text-sm font-medium text-foreground mb-1">Remembered preferences</p>
+                          <p className="text-xs text-muted-foreground mb-2">Last country: <strong>{settings.lastCountry}</strong> · Last region: <strong>{settings.lastRegion}</strong> · Last keyword: <strong>{settings.lastKeyword || "—"}</strong></p>
+                          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => {
+                            updateSetting("lastCountry", "All Countries");
+                            updateSetting("lastRegion", "All Regions");
+                            updateSetting("lastKeyword", "");
+                            toast({ title: "Preferences cleared", description: "Remembered country, region, and keyword have been reset." });
+                          }}>
+                            <RotateCcw className="w-3.5 h-3.5" /> Reset Preferences
+                          </Button>
+                        </div>
                         <div className="flex items-center justify-between py-3 border-b border-border">
                           <div>
                             <p className="text-sm font-medium text-foreground">Clear cached results</p>
