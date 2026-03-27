@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import {
   Building2, Users, Volume2, Hash, Briefcase, Code, Rocket,
   AlertTriangle, TrendingUp, Zap, MessageSquare, Target, Sparkles,
-  ArrowUpDown, Filter,
+  ArrowUpDown, Filter, ClipboardList, Download, Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { SnapshotResult, SnapshotSignals, ConversationStarters } from "./SnapshotDisplay";
