@@ -1,9 +1,10 @@
 import {
   MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code,
   Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2,
-  Zap, Copy, Check
+  Zap, Copy, Check, ClipboardList, Download
 } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export interface CompanyProfile {
   industry: string;
