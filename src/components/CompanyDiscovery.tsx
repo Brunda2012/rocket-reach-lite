@@ -1,7 +1,9 @@
-import { useState } from "react";
-import { Search, Loader2, Globe, ArrowRight, Sparkles, ExternalLink } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Loader2, Globe, ArrowRight, Sparkles, ExternalLink, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
+import SmartSearchBar from "@/components/SmartSearchBar";
+import { regionForCountry } from "@/lib/regions";
 
 interface DiscoveredCompany {
   name: string;
@@ -14,29 +16,36 @@ interface DiscoveredCompany {
 interface CompanyDiscoveryProps {
   onSelectCompanies: (urls: string[], theme?: string) => void;
   country?: string;
+  regionCountries?: string[];
+  initialKeyword?: string;
+  onKeywordChange?: (keyword: string) => void;
 }
 
-const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps) => {
-  const [theme, setTheme] = useState("");
+const CompanyDiscovery = ({ onSelectCompanies, country, regionCountries, initialKeyword, onKeywordChange }: CompanyDiscoveryProps) => {
+  const [theme, setTheme] = useState(initialKeyword || "");
   const [isLoading, setIsLoading] = useState(false);
   const [companies, setCompanies] = useState<DiscoveredCompany[]>([]);
   const [selected, setSelected] = useState<Set<number>>(new Set());
 
-  const handleDiscover = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!theme.trim()) return;
+  useEffect(() => {
+    if (initialKeyword !== undefined && initialKeyword !== theme) setTheme(initialKeyword);
+  }, [initialKeyword]);
+
+  const handleDiscover = async (searchTerm?: string) => {
+    const term = searchTerm || theme;
+    if (!term.trim()) return;
     setIsLoading(true);
     setCompanies([]);
     setSelected(new Set());
 
     try {
-      const { data, error } = await supabase.functions.invoke("discover-companies", {
-        body: { theme: theme.trim(), country },
-      });
+      const body: Record<string, unknown> = { theme: term.trim() };
+      if (country) body.country = country;
+      if (regionCountries) body.regionCountries = regionCountries;
+
+      const { data, error } = await supabase.functions.invoke("discover-companies", { body });
       if (error) throw error;
-      if (data?.companies) {
-        setCompanies(data.companies);
-      }
+      if (data?.companies) setCompanies(data.companies);
     } catch (err) {
       console.error("Discovery error:", err);
     } finally {
@@ -58,6 +67,11 @@ const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps)
     onSelectCompanies(urls, theme);
   };
 
+  const handleSearchChange = (val: string) => {
+    setTheme(val);
+    onKeywordChange?.(val);
+  };
+
   return (
     <div className="animate-fade-in-up stagger-2">
       <div className="bg-card rounded-xl border border-border shadow-card p-6">
@@ -67,33 +81,36 @@ const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps)
           </div>
           <div>
             <h3 className="text-sm font-semibold text-foreground">Discover Companies</h3>
-            <p className="text-xs text-muted-foreground">Enter a theme to find matching prospects</p>
+            <p className="text-xs text-muted-foreground">Search by industry, keyword, or country</p>
           </div>
         </div>
 
-        <form onSubmit={handleDiscover} className="flex gap-2 mb-4">
-          <div className="flex-1 flex items-center gap-2 bg-secondary/50 rounded-lg border border-border px-3 py-2 focus-within:border-primary/30 transition-all">
-            <Search className="w-4 h-4 text-muted-foreground shrink-0" />
-            <input
-              type="text"
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-              placeholder="e.g. health tech, AI infrastructure, fintech..."
-              className="flex-1 bg-transparent text-foreground text-sm placeholder:text-muted-foreground/50 outline-none"
-              disabled={isLoading}
-            />
-          </div>
-          <Button type="submit" disabled={!theme.trim() || isLoading} size="sm" className="gap-1.5 shrink-0">
-            {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Search className="w-3.5 h-3.5" />}
-            {isLoading ? "Searching..." : "Find"}
+        <div className="flex gap-2 mb-4">
+          <SmartSearchBar
+            value={theme}
+            onChange={handleSearchChange}
+            onSubmit={(v) => handleDiscover(v)}
+            placeholder="e.g. health tech, AI hiring, Denmark robotics…"
+            disabled={isLoading}
+          />
+          <Button
+            type="button"
+            onClick={() => handleDiscover()}
+            disabled={!theme.trim() || isLoading}
+            size="sm"
+            className="gap-1.5 shrink-0"
+          >
+            {isLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+            {isLoading ? "Searching…" : "Find"}
           </Button>
-        </form>
+        </div>
 
         {companies.length > 0 && (
           <>
             <div className="grid gap-2 sm:grid-cols-2">
               {companies.map((company, idx) => {
                 const isSelected = selected.has(idx);
+                const companyRegion = company.country ? regionForCountry(company.country) : undefined;
                 return (
                   <button
                     key={idx}
@@ -135,11 +152,18 @@ const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps)
                       <Globe className="w-2.5 h-2.5 text-primary mt-0.5 shrink-0" />
                       <span className="text-[10px] text-primary/80 leading-relaxed">{company.whyItMatches}</span>
                     </div>
-                    {company.country && (
-                      <span className="inline-block text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border">
-                        📍 {company.country}
-                      </span>
-                    )}
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {company.country && (
+                        <span className="inline-flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border">
+                          📍 {company.country}
+                        </span>
+                      )}
+                      {companyRegion && (
+                        <span className="inline-flex items-center gap-1 text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/8 text-primary border border-primary/15">
+                          <MapPin className="w-2 h-2" /> {companyRegion}
+                        </span>
+                      )}
+                    </div>
                   </button>
                 );
               })}

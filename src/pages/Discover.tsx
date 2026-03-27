@@ -1,28 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Loader2, Globe } from "lucide-react";
+import { Search, Loader2, Globe, MapPin } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import TopNav from "@/components/TopNav";
 import CompanyDiscovery from "@/components/CompanyDiscovery";
+import SmartSearchBar from "@/components/SmartSearchBar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useSettings } from "@/contexts/SettingsContext";
+import { ALL_COUNTRIES, ALL_REGIONS, countriesForRegion, regionForCountry } from "@/lib/regions";
 import type { SnapshotResult } from "@/components/SnapshotDisplay";
-
-const COUNTRIES = [
-  "All Countries", "United States", "United Kingdom", "India", "Germany", "France",
-  "Canada", "Australia", "Japan", "South Korea", "China", "Brazil", "Mexico",
-  "Netherlands", "Sweden", "Denmark", "Norway", "Finland", "Switzerland",
-  "Singapore", "Israel", "UAE", "South Africa", "Nigeria", "Kenya",
-  "Ireland", "Spain", "Italy", "Poland", "Indonesia", "Thailand", "Vietnam",
-  "New Zealand", "Austria", "Belgium", "Czech Republic", "Portugal", "Argentina",
-  "Chile", "Colombia", "Egypt", "Saudi Arabia", "Turkey", "Malaysia", "Philippines",
-];
 
 const Discover = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { settings, updateSetting } = useSettings();
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [country, setCountry] = useState("All Countries");
+  const [country, setCountry] = useState(settings.lastCountry || "All Countries");
+  const [region, setRegion] = useState(settings.lastRegion || "All Regions");
+  const [keyword, setKeyword] = useState(settings.lastKeyword || "");
+
+  // Sync region ↔ country
+  const handleRegionChange = (r: string) => {
+    setRegion(r);
+    setCountry("All Countries");
+    updateSetting("lastRegion", r);
+    updateSetting("lastCountry", "All Countries");
+  };
+
+  const handleCountryChange = (c: string) => {
+    setCountry(c);
+    if (c !== "All Countries") {
+      const r = regionForCountry(c);
+      if (r) { setRegion(r); updateSetting("lastRegion", r); }
+    }
+    updateSetting("lastCountry", c);
+  };
+
+  const handleSearchSubmit = (val: string) => {
+    setKeyword(val);
+    updateSetting("lastKeyword", val);
+  };
+
+  // Compute effective country filter
+  const effectiveCountry = (() => {
+    if (country !== "All Countries") return country;
+    if (region !== "All Regions") return undefined; // pass region countries to edge fn
+    return undefined;
+  })();
+
+  const effectiveRegionCountries = region !== "All Regions" && country === "All Countries"
+    ? countriesForRegion(region)
+    : undefined;
 
   const handleSelectCompanies = async (urls: string[], theme?: string) => {
     setIsAnalyzing(true);
@@ -60,7 +89,7 @@ const Discover = () => {
 
   return (
     <DashboardLayout>
-      <TopNav title="Discover" description="Find companies by theme, interest, or country" />
+      <TopNav title="Discover" description="Find companies by theme, interest, country, or region" />
       <main className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto p-6 space-y-6">
           <div className="bg-card rounded-xl border border-border shadow-card p-8 text-center">
@@ -72,18 +101,32 @@ const Discover = () => {
               Describe your ideal prospect — industry, tech stack, stage, or theme — and AI will find matching companies.
             </p>
 
-            {/* Country Filter */}
-            <div className="flex items-center justify-center gap-2 mb-5">
-              <Globe className="w-4 h-4 text-muted-foreground" />
-              <select
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-                className="bg-secondary/50 border border-border rounded-lg text-sm px-3 py-1.5 text-foreground outline-none focus:border-primary/30"
-              >
-                {COUNTRIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </select>
+            {/* Region & Country Filters */}
+            <div className="flex flex-wrap items-center justify-center gap-3 mb-5">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-muted-foreground" />
+                <select
+                  value={region}
+                  onChange={(e) => handleRegionChange(e.target.value)}
+                  className="bg-secondary/50 border border-border rounded-lg text-sm px-3 py-1.5 text-foreground outline-none focus:border-primary/30"
+                >
+                  {ALL_REGIONS.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-2">
+                <Globe className="w-4 h-4 text-muted-foreground" />
+                <select
+                  value={country}
+                  onChange={(e) => handleCountryChange(e.target.value)}
+                  className="bg-secondary/50 border border-border rounded-lg text-sm px-3 py-1.5 text-foreground outline-none focus:border-primary/30"
+                >
+                  {ALL_COUNTRIES.map((c) => (
+                    <option key={c} value={c}>{c}</option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {isAnalyzing && (
@@ -94,7 +137,10 @@ const Discover = () => {
             )}
             <CompanyDiscovery
               onSelectCompanies={handleSelectCompanies}
-              country={country === "All Countries" ? undefined : country}
+              country={effectiveCountry}
+              regionCountries={effectiveRegionCountries}
+              initialKeyword={keyword}
+              onKeywordChange={(k) => { setKeyword(k); updateSetting("lastKeyword", k); }}
             />
           </div>
         </div>

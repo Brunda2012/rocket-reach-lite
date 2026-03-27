@@ -26,6 +26,11 @@ export interface AppSettings {
   emailLength: "short" | "medium" | "detailed";
   includeRelevanceScore: boolean;
   includeRecommendedRecipient: boolean;
+
+  // Preference Memory
+  lastCountry: string;
+  lastRegion: string;
+  lastKeyword: string;
 }
 
 const defaultSettings: AppSettings = {
@@ -47,6 +52,9 @@ const defaultSettings: AppSettings = {
   emailLength: "medium",
   includeRelevanceScore: true,
   includeRecommendedRecipient: true,
+  lastCountry: "All Countries",
+  lastRegion: "All Regions",
+  lastKeyword: "",
 };
 
 interface SettingsContextValue {
@@ -72,7 +80,6 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    // Apply dark mode
     if (settings.darkMode) {
       document.documentElement.classList.add("dark");
     } else {
