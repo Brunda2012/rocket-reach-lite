@@ -275,7 +275,7 @@ const OutreachDashboard = ({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => generateOne(i)}
+                          onClick={() => generateOne(originalIndex)}
                           disabled={entry.loading}
                           className="gap-2"
                         >
@@ -286,7 +286,7 @@ const OutreachDashboard = ({
                     ) : (
                       <div className="flex items-center justify-center h-full min-h-[120px]">
                         <Button
-                          onClick={() => generateOne(i)}
+                          onClick={() => generateOne(originalIndex)}
                           disabled={entry.loading}
                           className="gap-2 gradient-primary text-primary-foreground"
                         >
