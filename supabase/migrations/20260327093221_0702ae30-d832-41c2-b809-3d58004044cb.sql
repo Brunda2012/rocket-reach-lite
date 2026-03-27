@@ -1,0 +1,1 @@
+ALTER TABLE public.prospect_snapshots ADD COLUMN suitability_score integer DEFAULT 0;

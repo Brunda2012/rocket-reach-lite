@@ -24,6 +24,7 @@ export type Database = {
           insights: Json | null
           recent_changes: Json | null
           signals: Json | null
+          suitability_score: number | null
           url: string
           why_it_matters: string | null
         }
@@ -36,6 +37,7 @@ export type Database = {
           insights?: Json | null
           recent_changes?: Json | null
           signals?: Json | null
+          suitability_score?: number | null
           url: string
           why_it_matters?: string | null
         }
@@ -48,6 +50,7 @@ export type Database = {
           insights?: Json | null
           recent_changes?: Json | null
           signals?: Json | null
+          suitability_score?: number | null
           url?: string
           why_it_matters?: string | null
         }
