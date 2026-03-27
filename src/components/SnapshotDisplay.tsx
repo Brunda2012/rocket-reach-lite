@@ -36,6 +36,14 @@ export interface PublicContacts {
   formUrls: string[];
 }
 
+export interface OutreachEmail {
+  subject: string;
+  emailBody: string;
+  recommendedRecipient: string;
+  reasoning: string;
+  relevanceScore: number;
+}
+
 export interface SnapshotResult {
   companyProfile: CompanyProfile;
   signals: SnapshotSignals;
@@ -46,6 +54,7 @@ export interface SnapshotResult {
   confidenceScore: number;
   suitabilityScore: number;
   publicContacts?: PublicContacts;
+  prospectEmail?: string;
 }
 
 /* ── helpers ── */
