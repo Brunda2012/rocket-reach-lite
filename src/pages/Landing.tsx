@@ -79,6 +79,30 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* Workflow */}
+      <section className="max-w-6xl mx-auto px-6 pb-8">
+        <div className="bg-card rounded-2xl border border-border shadow-card p-6">
+          <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" /> How It Works
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            {[
+              { step: "1", icon: Search, label: "Discover", desc: "Find companies by theme & country" },
+              { step: "2", icon: BarChart3, label: "Insights", desc: "Deep AI analysis of each company" },
+              { step: "3", icon: Send, label: "Outreach", desc: "Generate personalised cold emails" },
+              { step: "4", icon: Mail, label: "Email Pack", desc: "Manage & copy all emails" },
+            ].map(({ step, icon: Icon, label, desc }) => (
+              <div key={step} className="bg-secondary/40 rounded-xl border border-border p-4 text-center">
+                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-2 text-xs font-bold text-primary">{step}</div>
+                <Icon className="w-4 h-4 text-primary mx-auto mb-1.5" />
+                <p className="text-xs font-semibold text-foreground">{label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* What's Inside */}
       <section className="max-w-6xl mx-auto px-6 pb-8">
         <div className="bg-card rounded-2xl border border-border shadow-card p-6">
