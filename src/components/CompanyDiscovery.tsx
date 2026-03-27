@@ -89,7 +89,7 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
             className="rounded-2xl px-6 gap-2"
           >
             {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            Discover
+            {isLoading ? "Searching..." : "Find Matching Companies"}
           </Button>
         </form>
 
