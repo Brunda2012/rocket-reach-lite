@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Analyze", url: "/", icon: Search, description: "Company intelligence" },
+  { title: "Analyze", url: "/dashboard", icon: Search, description: "Company intelligence" },
   { title: "Discover", url: "/discover", icon: Sparkles, description: "Find prospects" },
   { title: "Outreach", url: "/outreach", icon: Send, description: "Email campaigns" },
   { title: "Insights", url: "/insights", icon: BarChart3, description: "View history" },
