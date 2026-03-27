@@ -1,7 +1,10 @@
+import { useMemo, useState } from "react";
 import {
   Building2, Users, Volume2, Hash, Briefcase, Code, Rocket,
   AlertTriangle, TrendingUp, Zap, MessageSquare, Target, Sparkles,
+  ArrowUpDown, Filter,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { SnapshotResult, SnapshotSignals, ConversationStarters } from "./SnapshotDisplay";
 
 const signalSections: { key: keyof SnapshotSignals; label: string; icon: React.ElementType; accent: string; cellBg: string; dotColor: string }[] = [
