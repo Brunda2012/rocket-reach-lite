@@ -15,13 +15,13 @@ const Index = () => {
     inputRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleGenerate = async (url: string) => {
+  const handleGenerate = async (url: string, linkedinUrl?: string) => {
     setIsLoading(true);
     setSnapshot(null);
 
     try {
       const { data, error } = await supabase.functions.invoke("prospect-snapshot", {
-        body: { url },
+        body: { url, linkedinUrl },
       });
 
       if (error) throw error;
