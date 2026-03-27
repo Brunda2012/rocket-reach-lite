@@ -95,7 +95,7 @@ serve(async (req) => {
           {
             role: "system",
             content: `You are an SDR doing research on a company.
-Input: Raw text scraped from the company's website.
+Input: Raw text scraped from multiple pages of the company's website (homepage, about, careers, blog).
 Task:
 - Extract 3 concise, high-value insights about the company's focus, strategy, or priorities.
 - Write 1 personalized conversation starter that references those insights.
@@ -104,7 +104,7 @@ Keep everything short, specific, and non-salesy.`,
           },
           {
             role: "user",
-            content: `Here is the raw text scraped from ${formattedUrl}:\n\n${visibleText}`,
+            content: `Here is text scraped from multiple pages of ${formattedUrl}:\n\n${visibleText}`,
           },
         ],
         tools: [
