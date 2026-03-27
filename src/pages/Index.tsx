@@ -20,24 +20,35 @@ const Index = () => {
     setInsight(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke("prospect-analyze", {
+      const { data, error } = await supabase.functions.invoke("prospect-snapshot", {
         body: { url },
       });
 
       if (error) throw error;
 
-      if (data?.success && data?.data) {
-        setInsight(data.data);
+      if (data?.insights) {
+        // Map the flat response into the UI format
+        const hostname = new URL(url.startsWith("http") ? url : `https://${url}`).hostname;
+        const companyName = hostname.replace("www.", "").split(".")[0];
+
+        const icons = ["trending", "users", "building"];
+        setInsight({
+          companyName: companyName.charAt(0).toUpperCase() + companyName.slice(1),
+          summary: "",
+          insights: data.insights.map((text: string, i: number) => ({
+            icon: icons[i] || "lightbulb",
+            title: text.split(/[.–—:]/)[0].trim().slice(0, 40),
+            detail: text,
+          })),
+          conversationStarter: data.conversationStarter,
+          whyItMatters: data.whyItMatters,
+        });
       } else {
         throw new Error(data?.error || "Analysis failed");
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Could not analyze this URL.";
-      toast({
-        title: "Analysis Error",
-        description: message,
-        variant: "destructive",
-      });
+      toast({ title: "Analysis Error", description: message, variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
