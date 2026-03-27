@@ -5,6 +5,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Landing from "./pages/Landing.tsx";
 import Index from "./pages/Index.tsx";
+import Discover from "./pages/Discover.tsx";
+import Insights from "./pages/Insights.tsx";
 import CompanyProfile from "./pages/CompanyProfile.tsx";
 import OutreachEngine from "./pages/OutreachEngine.tsx";
 import EmailPack from "./pages/EmailPack.tsx";
@@ -21,6 +23,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/dashboard" element={<Index />} />
+          <Route path="/discover" element={<Discover />} />
+          <Route path="/insights" element={<Insights />} />
           <Route path="/company" element={<CompanyProfile />} />
           <Route path="/outreach" element={<OutreachEngine />} />
           <Route path="/email-pack" element={<EmailPack />} />
