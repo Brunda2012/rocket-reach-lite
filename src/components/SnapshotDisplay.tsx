@@ -1,10 +1,12 @@
 import {
   MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code,
   Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2,
-  Zap, Copy, Check, ClipboardList, Download, Mail, Phone, ExternalLink
+  Zap, Copy, Check, ClipboardList, Download, Mail, Phone, ExternalLink,
+  Send, Loader2, Star
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface CompanyProfile {
   industry: string;
