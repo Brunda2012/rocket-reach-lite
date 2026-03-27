@@ -220,6 +220,7 @@ Keep everything short, specific, and non-salesy.`,
     if (toolCall?.function?.arguments) {
       const result = JSON.parse(toolCall.function.arguments);
       return new Response(JSON.stringify({
+        companyProfile: result.companyProfile,
         signals: result.signals,
         insights: result.insights,
         conversationStarters: result.conversationStarters,
