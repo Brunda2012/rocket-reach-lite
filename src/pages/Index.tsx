@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import HeroSection from "@/components/HeroSection";
-import CompanyInput from "@/components/CompanyInput";
+import CompanyInput, { type CompanyEntry } from "@/components/CompanyInput";
 import CompanyDiscovery from "@/components/CompanyDiscovery";
 import SnapshotDisplay, { type SnapshotResult } from "@/components/SnapshotDisplay";
 import ComparisonBoard from "@/components/ComparisonBoard";
@@ -17,15 +17,15 @@ const Index = () => {
     inputRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const handleGenerate = async (urls: string[], linkedinUrl?: string) => {
+  const handleGenerate = async (entries: CompanyEntry[], linkedinUrl?: string) => {
     setIsLoading(true);
     setSnapshots([]);
 
     try {
       const results = await Promise.all(
-        urls.map(async (url) => {
+        entries.map(async ({ url, prospectEmail }) => {
           const { data, error } = await supabase.functions.invoke("prospect-snapshot", {
-            body: { url, linkedinUrl },
+            body: { url, linkedinUrl, prospectEmail: prospectEmail || undefined },
           });
           if (error) throw new Error(`Failed for ${url}: ${error.message}`);
           if (!data?.conversationStarters && !data?.insights)
