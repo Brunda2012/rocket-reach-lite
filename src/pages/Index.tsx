@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Search, Globe, BarChart3, Send } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Search, Globe, BarChart3, Send, Eye } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
 import TopNav from "@/components/TopNav";
 import StepIndicator from "@/components/StepIndicator";
@@ -177,6 +178,18 @@ const Index = () => {
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>
+
+              {snapshots.map((snap, i) => (
+                <div key={i} className="bg-card rounded-xl border border-border shadow-card p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{snap.companyProfile.industry} · {snap.companyProfile.companySize}</p>
+                    <p className="text-xs text-muted-foreground">Confidence {snap.confidenceScore}/100 · Suitability {snap.suitabilityScore}/100</p>
+                  </div>
+                  <Button variant="outline" size="sm" className="gap-1.5" onClick={() => navigate("/company", { state: { snapshot: snap } })}>
+                    <Eye className="w-3.5 h-3.5" /> View Profile
+                  </Button>
+                </div>
+              ))}
 
               {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} userTheme={userTheme} />}
               {snapshots.length >= 2 && <ComparisonBoard snapshots={snapshots} />}
