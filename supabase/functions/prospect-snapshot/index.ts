@@ -94,11 +94,12 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are an SDR doing research on a company.
+            content: `You are an SDR doing deep research on a company.
 Input: Raw text scraped from multiple pages of the company's website (homepage, about, careers, blog).
 Task:
+- Extract structured signals: hiring signals, tech stack, strategic initiatives, pain points, and growth indicators.
 - Extract 3 concise, high-value insights about the company's focus, strategy, or priorities.
-- Write 1 personalized conversation starter that references those insights.
+- Write 1 personalized conversation starter that references the signals and insights.
 - Write 1 sentence explaining why this matters to them.
 Keep everything short, specific, and non-salesy.`,
           },
@@ -112,10 +113,43 @@ Keep everything short, specific, and non-salesy.`,
             type: "function",
             function: {
               name: "prospect_snapshot",
-              description: "Return 3 key insights, a conversation starter, and why it matters",
+              description: "Return structured signals, insights, a conversation starter, and why it matters",
               parameters: {
                 type: "object",
                 properties: {
+                  signals: {
+                    type: "object",
+                    description: "Structured business signals extracted from the website",
+                    properties: {
+                      hiringSignals: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Hiring trends, open roles, team expansion signals",
+                      },
+                      techStack: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Technologies, tools, platforms mentioned or inferred",
+                      },
+                      strategicInitiatives: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Key strategic moves, partnerships, product launches",
+                      },
+                      painPoints: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Challenges, problems, or friction areas inferred from content",
+                      },
+                      growthIndicators: {
+                        type: "array",
+                        items: { type: "string" },
+                        description: "Funding, revenue milestones, expansion, market signals",
+                      },
+                    },
+                    required: ["hiringSignals", "techStack", "strategicInitiatives", "painPoints", "growthIndicators"],
+                    additionalProperties: false,
+                  },
                   insights: {
                     type: "array",
                     items: { type: "string" },
@@ -123,14 +157,14 @@ Keep everything short, specific, and non-salesy.`,
                   },
                   conversationStarter: {
                     type: "string",
-                    description: "A natural, non-salesy conversation opener referencing specific details",
+                    description: "A natural, non-salesy conversation opener referencing specific signals",
                   },
                   whyItMatters: {
                     type: "string",
                     description: "One sentence about why now is a good time to reach out",
                   },
                 },
-                required: ["insights", "conversationStarter", "whyItMatters"],
+                required: ["signals", "insights", "conversationStarter", "whyItMatters"],
                 additionalProperties: false,
               },
             },
