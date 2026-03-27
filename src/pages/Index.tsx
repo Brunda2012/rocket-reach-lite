@@ -39,6 +39,7 @@ const Index = () => {
             conversationStarters: data.conversationStarters || {},
             whyItMatters: data.whyItMatters,
             confidenceScore: data.confidenceScore ?? 0,
+            suitabilityScore: data.suitabilityScore ?? 0,
           } as SnapshotResult;
 
           // Store in database
