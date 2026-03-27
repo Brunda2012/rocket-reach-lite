@@ -34,7 +34,7 @@ serve(async (req) => {
       formattedUrl = `https://${formattedUrl}`;
     }
     const baseUrl = formattedUrl.replace(/\/+$/, "");
-    const subPaths = ["/about", "/about-us", "/careers", "/jobs", "/blog", "/contact", "/contact-us"];
+    const subPaths = ["/about", "/about-us", "/team", "/our-team", "/people", "/leadership", "/careers", "/jobs", "/blog", "/contact", "/contact-us"];
 
     function stripHtml(html: string): string {
       return html
@@ -212,6 +212,21 @@ Keep everything short, specific, and non-salesy. For keyPeople, ONLY include rea
                     items: { type: "string" },
                     description: "New or recently updated items — launches, announcements, leadership changes",
                   },
+                  keyPeople: {
+                    type: "array",
+                    description: "Real people found on the website — founders, executives, team leads, board members",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: { type: "string", description: "Full name of the person" },
+                        role: { type: "string", description: "Job title or role" },
+                        email: { type: "string", description: "Email address if found on the website" },
+                        linkedinUrl: { type: "string", description: "LinkedIn profile URL if found" },
+                      },
+                      required: ["name", "role"],
+                      additionalProperties: false,
+                    },
+                  },
                   personaStarters: {
                     type: "object",
                     description: "Conversation starters per persona plus a summary",
@@ -234,7 +249,7 @@ Keep everything short, specific, and non-salesy. For keyPeople, ONLY include rea
                     description: "0-100 prospect suitability score based on industry fit, growth signals, hiring activity, and pain points",
                   },
                 },
-                required: ["companyOverview", "strategicSignals", "recentChanges", "personaStarters", "confidenceScore", "suitabilityScore"],
+                required: ["companyOverview", "strategicSignals", "recentChanges", "keyPeople", "personaStarters", "confidenceScore", "suitabilityScore"],
                 additionalProperties: false,
               },
             },
