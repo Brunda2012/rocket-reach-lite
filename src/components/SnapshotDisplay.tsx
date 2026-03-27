@@ -156,7 +156,62 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
           </div>
         </div>
 
-        {/* ── Company Profile Card ── */}
+        {/* ── Action Buttons ── */}
+        <div className="animate-fade-in-up flex gap-3 justify-end">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={async () => {
+              await navigator.clipboard.writeText(buildPlainText(data));
+              setCopiedAll(true);
+              setTimeout(() => setCopiedAll(false), 2000);
+            }}
+          >
+            {copiedAll ? <Check className="w-4 h-4 text-success" /> : <ClipboardList className="w-4 h-4" />}
+            {copiedAll ? "Copied!" : "Copy All Insights"}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-2"
+            onClick={() => {
+              const text = buildPlainText(data);
+              const blob = new Blob([text], { type: "application/pdf" });
+              // Build a simple text-based printable page for PDF
+              const printWindow = window.open("", "_blank");
+              if (printWindow) {
+                printWindow.document.write(`<!DOCTYPE html><html><head><title>Prospect Snapshot</title><style>body{font-family:system-ui,sans-serif;max-width:700px;margin:40px auto;padding:20px;color:#1a1a1a;line-height:1.6;font-size:14px}h1{font-size:22px;border-bottom:2px solid #6366f1;padding-bottom:8px}h2{font-size:16px;margin-top:24px;color:#6366f1}ul{padding-left:20px}li{margin-bottom:4px}blockquote{border-left:3px solid #6366f1;padding-left:12px;font-style:italic;color:#555}.score{display:inline-block;background:#6366f1;color:white;padding:2px 10px;border-radius:12px;font-weight:bold}</style></head><body>`);
+                printWindow.document.write(`<h1>Prospect Snapshot</h1>`);
+                const p = data.companyProfile;
+                printWindow.document.write(`<h2>Company Profile</h2><p><strong>Industry:</strong> ${p.industry} · <strong>Size:</strong> ${p.companySize} · <strong>Tone:</strong> ${p.tone}</p>`);
+                if (p.keywords?.length) printWindow.document.write(`<p><strong>Keywords:</strong> ${p.keywords.join(", ")}</p>`);
+                if (data.recentChanges?.length) {
+                  printWindow.document.write(`<h2>What's New</h2><ul>${data.recentChanges.map(c => `<li>${c}</li>`).join("")}</ul>`);
+                }
+                for (const { key, label } of signalSections) {
+                  const items = data.signals?.[key];
+                  if (items?.length) printWindow.document.write(`<h2>${label}</h2><ul>${items.map(s => `<li>${s}</li>`).join("")}</ul>`);
+                }
+                printWindow.document.write(`<h2>Key Insights</h2><ol>${data.insights.map(ins => `<li>${ins}</li>`).join("")}</ol>`);
+                printWindow.document.write(`<h2>Conversation Starters</h2>`);
+                for (const { key, label } of personaLabels) {
+                  const t = data.conversationStarters?.[key];
+                  if (t) printWindow.document.write(`<p><strong>${label}:</strong> <em>"${t}"</em></p>`);
+                }
+                printWindow.document.write(`<h2>Why This Matters</h2><blockquote>${data.whyItMatters}</blockquote>`);
+                printWindow.document.write(`<p>Confidence Score: <span class="score">${data.confidenceScore ?? 0}/100</span></p>`);
+                printWindow.document.write(`</body></html>`);
+                printWindow.document.close();
+                printWindow.print();
+              }
+            }}
+          >
+            <Download className="w-4 h-4" />
+            Download as PDF
+          </Button>
+        </div>
+
         {profile && (
           <div className="animate-fade-in-up stagger-1 bg-card rounded-2xl shadow-card border border-border overflow-hidden">
             <div className="gradient-subtle p-6">
