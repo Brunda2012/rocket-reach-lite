@@ -163,17 +163,16 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
   const suitLabel = suit >= 90 ? "Exceptional" : suit >= 70 ? "Strong" : suit >= 50 ? "Moderate" : "Weak";
 
   return (
-    <section className="py-16 px-4">
-      <div className="max-w-4xl mx-auto space-y-5">
-        {/* ── Dashboard Header ── */}
-        <div className="animate-fade-in-up flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">Prospect Snapshot</h2>
-              <p className="text-xs text-muted-foreground">AI-generated intelligence report</p>
+    <div className="space-y-4 animate-fade-in-up stagger-2">
+      {/* ── Dashboard Header ── */}
+      <div className="bg-card rounded-xl border border-border shadow-card p-5 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">Prospect Snapshot</h3>
+            <p className="text-[11px] text-muted-foreground">AI-generated intelligence report</p>
             </div>
           </div>
 
@@ -537,10 +536,10 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
             </div>
             <h3 className="text-sm font-semibold uppercase tracking-widest text-primary-foreground/70">Why This Matters</h3>
           </div>
-          <p className="text-primary-foreground/90 leading-relaxed text-base font-medium">{data.whyItMatters}</p>
+          <p className="text-primary-foreground/90 leading-relaxed text-sm">{data.whyItMatters}</p>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
