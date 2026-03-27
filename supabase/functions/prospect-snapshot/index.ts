@@ -97,6 +97,7 @@ serve(async (req) => {
             content: `You are an SDR doing deep research on a company.
 Input: Raw text scraped from multiple pages of the company's website (homepage, about, careers, blog).
 Task:
+- Infer a company profile: industry, estimated company size, top keywords, and brand tone/voice.
 - Extract structured signals: hiring signals, tech stack, strategic initiatives, pain points, and growth indicators.
 - Extract 3 concise, high-value insights about the company's focus, strategy, or priorities.
 - Write 4 personalized conversation starters, each tailored to a specific persona: CTO, CEO, Head of Operations, and Head of Sales. Each should reference relevant signals for that role.
@@ -117,6 +118,18 @@ Keep everything short, specific, and non-salesy.`,
               parameters: {
                 type: "object",
                 properties: {
+                  companyProfile: {
+                    type: "object",
+                    description: "Inferred company profile from website content",
+                    properties: {
+                      industry: { type: "string", description: "Primary industry or sector" },
+                      companySize: { type: "string", description: "Estimated size: Startup, SMB, Mid-Market, or Enterprise" },
+                      keywords: { type: "array", items: { type: "string" }, description: "5-8 keywords that define the company" },
+                      tone: { type: "string", description: "Brand voice/tone in 2-3 words, e.g. 'Technical & Developer-focused'" },
+                    },
+                    required: ["industry", "companySize", "keywords", "tone"],
+                    additionalProperties: false,
+                  },
                   signals: {
                     type: "object",
                     description: "Structured business signals extracted from the website",
@@ -172,7 +185,7 @@ Keep everything short, specific, and non-salesy.`,
                     description: "One sentence about why now is a good time to reach out",
                   },
                 },
-                required: ["signals", "insights", "conversationStarters", "whyItMatters"],
+                required: ["companyProfile", "signals", "insights", "conversationStarters", "whyItMatters"],
                 additionalProperties: false,
               },
             },
@@ -207,6 +220,7 @@ Keep everything short, specific, and non-salesy.`,
     if (toolCall?.function?.arguments) {
       const result = JSON.parse(toolCall.function.arguments);
       return new Response(JSON.stringify({
+        companyProfile: result.companyProfile,
         signals: result.signals,
         insights: result.insights,
         conversationStarters: result.conversationStarters,
