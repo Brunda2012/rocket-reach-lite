@@ -458,8 +458,79 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
           </div>
         )}
 
+        {/* ── Outreach Email Generator ── */}
+        <div className="animate-fade-in-up stagger-7 bg-card rounded-2xl shadow-card border border-border p-6">
+          <SectionHeader icon={Send} title="Outreach Email" accent="bg-primary/10 text-primary" />
+          {!outreach ? (
+            <Button
+              onClick={generateOutreach}
+              disabled={outreachLoading}
+              className="w-full gap-2 gradient-primary text-primary-foreground"
+            >
+              {outreachLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Crafting personalized email...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Generate Outreach Email
+                </>
+              )}
+            </Button>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Star className="w-4 h-4 text-warning" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Relevance: {outreach.relevanceScore}/100
+                  </span>
+                </div>
+                <CopyButton text={`Subject: ${outreach.subject}\n\n${outreach.emailBody}`} />
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Subject</p>
+                <p className="text-sm font-semibold text-foreground">{outreach.subject}</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">To</p>
+                <a href={`mailto:${outreach.recommendedRecipient}`} className="text-sm text-primary hover:underline">
+                  {outreach.recommendedRecipient}
+                </a>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Email Body</p>
+                <div className="bg-secondary/50 rounded-xl p-4 text-sm text-foreground/85 leading-relaxed whitespace-pre-line">
+                  {outreach.emailBody}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Why This Email Works</p>
+                <p className="text-xs text-muted-foreground italic">{outreach.reasoning}</p>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={generateOutreach}
+                disabled={outreachLoading}
+                className="gap-2"
+              >
+                {outreachLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                Regenerate
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* ── Why This Matters ── */}
-        <div className="animate-fade-in-up stagger-7 gradient-primary rounded-2xl p-6 shadow-glow">
+        <div className="animate-fade-in-up stagger-8 gradient-primary rounded-2xl p-6 shadow-glow">
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-8 h-8 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <Target className="w-4 h-4 text-primary-foreground" />
