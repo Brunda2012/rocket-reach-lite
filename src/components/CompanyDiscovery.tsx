@@ -14,7 +14,6 @@ interface CompanyDiscoveryProps {
   onSelectCompanies: (urls: string[], theme?: string) => void;
   country?: string;
 }
-}
 
 const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps) => {
   const [theme, setTheme] = useState("");
