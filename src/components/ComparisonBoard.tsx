@@ -76,6 +76,15 @@ function CompanyHeader({ data }: { data: SnapshotResult }) {
           ))}
         </div>
       )}
+      {data.helpfulFor && data.helpfulFor.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-1 pt-1">
+          {data.helpfulFor.map((tag, i) => (
+            <span key={i} className="text-[10px] px-2 py-0.5 rounded-full bg-accent/10 text-accent-foreground border border-accent/20">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

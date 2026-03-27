@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Send, Loader2, Copy, Check, Mail, Phone, ExternalLink, Star, Building2, ClipboardList, Trophy,
+  Send, Loader2, Copy, Check, Mail, Phone, ExternalLink, Star, Building2, ClipboardList, Trophy, FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,6 +52,7 @@ const OutreachDashboard = ({
   urls: string[];
   userTheme?: string;
 }) => {
+  const navigate = useNavigate();
   const [entries, setEntries] = useState<DashboardEntry[]>(
     snapshots.map((s, i) => ({ snapshot: s, url: urls[i] || "", outreach: null, loading: false }))
   );
@@ -115,10 +117,32 @@ const OutreachDashboard = ({
           </div>
           <div className="flex gap-2">
             {generatedEntries.length >= 1 && (
-              <Button variant="outline" size="sm" onClick={copyOutreachPack} className="gap-1.5">
-                {copiedPack ? <Check className="w-3.5 h-3.5 text-success" /> : <ClipboardList className="w-3.5 h-3.5" />}
-                {copiedPack ? "Copied!" : "Copy Outreach Pack"}
-              </Button>
+              <>
+                <Button variant="outline" size="sm" onClick={copyOutreachPack} className="gap-1.5">
+                  {copiedPack ? <Check className="w-3.5 h-3.5 text-success" /> : <ClipboardList className="w-3.5 h-3.5" />}
+                  {copiedPack ? "Copied!" : "Copy Outreach Pack"}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => {
+                    const emailData = generatedEntries.map((e) => ({
+                      companyName: e.url.replace(/^https?:\/\//, "").replace(/\/+$/, ""),
+                      url: e.url,
+                      subject: e.outreach!.subject,
+                      emailBody: e.outreach!.emailBody,
+                      recommendedRecipient: e.outreach!.recommendedRecipient,
+                      reasoning: e.outreach!.reasoning,
+                      relevanceScore: e.outreach!.relevanceScore,
+                    }));
+                    navigate("/email-pack", { state: { emails: emailData } });
+                  }}
+                >
+                  <FileText className="w-3.5 h-3.5" />
+                  View Email Pack
+                </Button>
+              </>
             )}
             {!allGenerated && (
               <Button onClick={generateAll} disabled={anyLoading} size="sm" className="gap-1.5">

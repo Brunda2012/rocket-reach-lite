@@ -7,6 +7,7 @@ import Landing from "./pages/Landing.tsx";
 import Index from "./pages/Index.tsx";
 import CompanyProfile from "./pages/CompanyProfile.tsx";
 import OutreachEngine from "./pages/OutreachEngine.tsx";
+import EmailPack from "./pages/EmailPack.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/dashboard" element={<Index />} />
           <Route path="/company" element={<CompanyProfile />} />
           <Route path="/outreach" element={<OutreachEngine />} />
+          <Route path="/email-pack" element={<EmailPack />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -117,6 +117,16 @@ const CompanyProfilePage = () => {
                     ))}
                   </div>
                 )}
+                {data.helpfulFor && data.helpfulFor.length > 0 && (
+                  <div className="mt-2 flex items-center gap-1.5 flex-wrap">
+                    <Users className="w-3 h-3 text-muted-foreground shrink-0" />
+                    {data.helpfulFor.map((tag, i) => (
+                      <span key={i} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent-foreground border border-accent/20">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           </div>
