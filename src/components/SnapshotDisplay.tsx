@@ -277,6 +277,17 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
               ))}
             </div>
           )}
+          {data.helpfulFor && data.helpfulFor.length > 0 && (
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <Users className="w-3 h-3 text-muted-foreground shrink-0" />
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Helpful For:</span>
+              {data.helpfulFor.map((tag, i) => (
+                <span key={i} className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent-foreground border border-accent/20">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

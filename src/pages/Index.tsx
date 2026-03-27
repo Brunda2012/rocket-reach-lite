@@ -48,6 +48,7 @@ const Index = () => {
 
           const snapshot = {
             companyProfile: data.companyProfile || {},
+            helpfulFor: data.helpfulFor || [],
             signals: data.signals || {},
             recentChanges: data.recentChanges || [],
             insights: data.insights || [],
