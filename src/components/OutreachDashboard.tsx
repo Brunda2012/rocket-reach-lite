@@ -104,32 +104,32 @@ const OutreachDashboard = ({
   };
 
   return (
-    <section className="py-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
+    <div className="animate-fade-in-up stagger-3">
+      <div className="bg-card rounded-xl border border-border shadow-card p-6">
+        <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
           <div>
-            <h2 className="text-2xl font-bold text-foreground">Outreach Dashboard</h2>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h3 className="text-sm font-semibold text-foreground">Outreach Dashboard</h3>
+            <p className="text-xs text-muted-foreground mt-0.5">
               {snapshots.length} {snapshots.length === 1 ? "company" : "companies"} analyzed
             </p>
           </div>
           <div className="flex gap-2">
             {generatedEntries.length >= 1 && (
-              <Button variant="outline" onClick={copyOutreachPack} className="gap-2">
-                {copiedPack ? <Check className="w-4 h-4 text-success" /> : <ClipboardList className="w-4 h-4" />}
+              <Button variant="outline" size="sm" onClick={copyOutreachPack} className="gap-1.5">
+                {copiedPack ? <Check className="w-3.5 h-3.5 text-success" /> : <ClipboardList className="w-3.5 h-3.5" />}
                 {copiedPack ? "Copied!" : "Copy Outreach Pack"}
               </Button>
             )}
             {!allGenerated && (
-              <Button onClick={generateAll} disabled={anyLoading} className="gap-2 gradient-primary text-primary-foreground">
-                {anyLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              <Button onClick={generateAll} disabled={anyLoading} size="sm" className="gap-1.5">
+                {anyLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                 Generate All Emails
               </Button>
             )}
           </div>
         </div>
 
-        <div className="grid gap-5">
+        <div className="grid gap-4">
           {[...entries]
             .map((entry, originalIndex) => ({ entry, originalIndex }))
             .sort((a, b) => {
@@ -145,17 +145,17 @@ const OutreachDashboard = ({
             return (
               <div
                 key={originalIndex}
-                className={`rounded-2xl shadow-card border overflow-hidden hover:shadow-elevated transition-shadow ${
+                className={`rounded-lg border overflow-hidden transition-all ${
                   isBestFit
-                    ? "bg-card border-primary/30 ring-2 ring-primary/20"
-                    : "bg-card border-border"
+                    ? "bg-primary/3 border-primary/20 ring-1 ring-primary/15"
+                    : "bg-secondary/30 border-border"
                 }`}
               >
                 {isBestFit && (
-                  <div className="gradient-primary px-4 py-1.5 flex items-center gap-2">
-                    <Trophy className="w-3.5 h-3.5 text-primary-foreground" />
-                    <span className="text-xs font-semibold text-primary-foreground uppercase tracking-wider">
-                      Best Fit Prospect
+                  <div className="bg-primary px-3 py-1 flex items-center gap-1.5">
+                    <Trophy className="w-3 h-3 text-primary-foreground" />
+                    <span className="text-[10px] font-semibold text-primary-foreground uppercase tracking-wider">
+                      Best Fit
                     </span>
                   </div>
                 )}
@@ -311,7 +311,7 @@ const OutreachDashboard = ({
           })}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

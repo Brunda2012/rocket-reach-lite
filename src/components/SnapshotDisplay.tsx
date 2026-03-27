@@ -163,63 +163,32 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
   const suitLabel = suit >= 90 ? "Exceptional" : suit >= 70 ? "Strong" : suit >= 50 ? "Moderate" : "Weak";
 
   return (
-    <section className="py-16 px-4">
-      <div className="max-w-4xl mx-auto space-y-5">
-        {/* ── Dashboard Header ── */}
-        <div className="animate-fade-in-up flex items-center justify-between">
+    <div className="space-y-4 animate-fade-in-up stagger-2">
+      {/* ── Dashboard Header ── */}
+      <div className="bg-card rounded-xl border border-border shadow-card p-5 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center">
+            <Sparkles className="w-4 h-4 text-primary" />
+          </div>
+          <div>
+            <h3 className="text-sm font-semibold text-foreground">Prospect Snapshot</h3>
+            <p className="text-[11px] text-muted-foreground">AI-generated intelligence report</p>
+            </div>
+          </div>
+
+          {/* Score Badges */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <div className="flex items-center gap-2 bg-secondary/60 rounded-lg px-3 py-2">
+              <div className="text-right">
+                <p className="text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">Confidence</p>
+                <p className={`text-xs font-bold ${scoreColor}`}>{score}/100</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">Prospect Snapshot</h2>
-              <p className="text-xs text-muted-foreground">AI-generated intelligence report</p>
-            </div>
-          </div>
-
-          {/* Confidence Score Badge */}
-          <div className="flex items-center gap-3 bg-card rounded-2xl shadow-card border border-border px-5 py-3">
-            <div className="text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Confidence</p>
-              <p className={`text-xs font-bold ${scoreColor}`}>{scoreLabel}</p>
-            </div>
-            <div className="relative w-12 h-12">
-              <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" />
-                <circle
-                  cx="24" cy="24" r="20" fill="none" strokeWidth="3"
-                  strokeDasharray={`${(score / 100) * 125.66} 125.66`}
-                  strokeLinecap="round"
-                  className={scoreColor}
-                  stroke="currentColor"
-                />
-              </svg>
-              <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${scoreColor}`}>
-                {score}
-              </span>
-            </div>
-          </div>
-
-          {/* Suitability Score Badge */}
-          <div className="flex items-center gap-3 bg-card rounded-2xl shadow-card border border-border px-5 py-3">
-            <div className="text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Suitability</p>
-              <p className={`text-xs font-bold ${suitColor}`}>{suitLabel}</p>
-            </div>
-            <div className="relative w-12 h-12">
-              <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" />
-                <circle
-                  cx="24" cy="24" r="20" fill="none" strokeWidth="3"
-                  strokeDasharray={`${(suit / 100) * 125.66} 125.66`}
-                  strokeLinecap="round"
-                  className={suitColor}
-                  stroke="currentColor"
-                />
-              </svg>
-              <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${suitColor}`}>
-                {suit}
-              </span>
+            <div className="flex items-center gap-2 bg-secondary/60 rounded-lg px-3 py-2">
+              <div className="text-right">
+                <p className="text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">Suitability</p>
+                <p className={`text-xs font-bold ${suitColor}`}>{suit}/100</p>
+              </div>
             </div>
           </div>
         </div>
@@ -281,7 +250,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         </div>
 
         {profile && (
-          <div className="animate-fade-in-up stagger-1 bg-card rounded-2xl shadow-card border border-border overflow-hidden">
+          <div className="animate-fade-in-up stagger-1 bg-card rounded-xl shadow-card border border-border overflow-hidden">
             <div className="gradient-subtle p-6">
               <SectionHeader icon={Building2} title="Company Profile" />
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-5">
@@ -323,7 +292,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
 
         {/* ── Recent Changes ── */}
         {data.recentChanges?.length > 0 && (
-          <div className="animate-fade-in-up stagger-2 bg-card rounded-2xl shadow-card border border-border p-6">
+          <div className="animate-fade-in-up stagger-2 bg-card rounded-xl shadow-card border border-border p-6">
             <SectionHeader icon={Zap} title="What's New" accent="bg-warning/10 text-warning" />
             <div className="grid gap-2.5">
               {data.recentChanges.map((change, i) => (
@@ -349,7 +318,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
               const items = data.signals?.[key];
               if (!items || items.length === 0) return null;
               return (
-                <div key={key} className="bg-card rounded-2xl shadow-card border border-border p-5 hover:shadow-elevated transition-all duration-300 group">
+                <div key={key} className="bg-card rounded-xl shadow-card border border-border p-5 hover:shadow-elevated transition-all duration-300 group">
                   <div className="flex items-center gap-2 mb-3">
                     <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${accent}`}>
                       <Icon className="w-3.5 h-3.5" />
@@ -371,7 +340,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         </div>
 
         {/* ── Key Insights ── */}
-        <div className="animate-fade-in-up stagger-4 bg-card rounded-2xl shadow-card border border-border p-6">
+        <div className="animate-fade-in-up stagger-4 bg-card rounded-xl shadow-card border border-border p-6">
           <SectionHeader icon={CheckCircle} title="Key Insights" accent="bg-success/10 text-success" />
           <div className="space-y-3">
             {data.insights.map((insight, i) => (
@@ -400,7 +369,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
               return (
                 <div
                   key={key}
-                  className="bg-card rounded-2xl shadow-card border border-border p-5 hover:shadow-elevated hover:border-primary/20 transition-all duration-300 group relative"
+                  className="bg-card rounded-xl shadow-card border border-border p-5 hover:shadow-elevated hover:border-primary/20 transition-all duration-300 group relative"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
@@ -418,7 +387,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
 
         {/* ── Public Contacts ── */}
         {data.publicContacts && (data.publicContacts.emails?.length > 0 || data.publicContacts.phones?.length > 0 || data.publicContacts.formUrls?.length > 0) && (
-          <div className="animate-fade-in-up stagger-6 bg-card rounded-2xl shadow-card border border-border p-6">
+          <div className="animate-fade-in-up stagger-6 bg-card rounded-xl shadow-card border border-border p-6">
             <SectionHeader icon={Mail} title="Public Contacts" accent="bg-info/10 text-info" />
             <div className="grid gap-4 sm:grid-cols-3">
               {data.publicContacts.emails?.length > 0 && (
@@ -459,7 +428,7 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         )}
 
         {/* ── Outreach Email Generator ── */}
-        <div className="animate-fade-in-up stagger-7 bg-card rounded-2xl shadow-card border border-border p-6">
+        <div className="animate-fade-in-up stagger-7 bg-card rounded-xl shadow-card border border-border p-6">
           <SectionHeader icon={Send} title="Outreach Email" accent="bg-primary/10 text-primary" />
           {!outreach ? (
             <Button
@@ -530,17 +499,17 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
         </div>
 
         {/* ── Why This Matters ── */}
-        <div className="animate-fade-in-up stagger-8 gradient-primary rounded-2xl p-6 shadow-glow">
+        <div className="animate-fade-in-up stagger-8 gradient-primary rounded-xl p-6 shadow-glow">
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-8 h-8 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <Target className="w-4 h-4 text-primary-foreground" />
             </div>
             <h3 className="text-sm font-semibold uppercase tracking-widest text-primary-foreground/70">Why This Matters</h3>
           </div>
-          <p className="text-primary-foreground/90 leading-relaxed text-base font-medium">{data.whyItMatters}</p>
+          <p className="text-primary-foreground/90 leading-relaxed text-sm">{data.whyItMatters}</p>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
