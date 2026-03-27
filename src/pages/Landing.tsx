@@ -29,10 +29,7 @@ const Landing = () => {
           AI-Powered Prospect Intelligence
         </div>
         <h1 className="text-4xl md:text-5xl font-extrabold text-foreground leading-tight tracking-tight max-w-3xl mx-auto">
-          Turn any company URL into{" "}
-          <span className="gradient-primary bg-clip-text text-transparent">outreach-ready</span>{" "}
-          intelligence to{" "}
-          <span className="gradient-primary bg-clip-text text-transparent">HealthTech Hackathon</span>
+          HEALTHTECH HACKATHON
         </h1>
         <p className="mt-5 text-base text-muted-foreground max-w-xl mx-auto leading-relaxed">
           Paste a website, get instant AI-generated insights — key signals, personalized conversation starters, and ready-to-send outreach emails.
