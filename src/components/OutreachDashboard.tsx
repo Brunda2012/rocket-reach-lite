@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Send, Loader2, Copy, Check, Mail, Phone, ExternalLink, Star, Building2, ClipboardList,
+  Send, Loader2, Copy, Check, Mail, Phone, ExternalLink, Star, Building2, ClipboardList, Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -130,15 +130,35 @@ const OutreachDashboard = ({
         </div>
 
         <div className="grid gap-5">
-          {entries.map((entry, i) => {
+          {[...entries]
+            .map((entry, originalIndex) => ({ entry, originalIndex }))
+            .sort((a, b) => {
+              const scoreA = a.entry.outreach?.relevanceScore ?? -1;
+              const scoreB = b.entry.outreach?.relevanceScore ?? -1;
+              return scoreB - scoreA;
+            })
+            .map(({ entry, originalIndex }, sortedIndex) => {
             const profile = entry.snapshot.companyProfile;
             const contacts = entry.snapshot.publicContacts;
+            const isBestFit = entry.outreach && sortedIndex < 2 && generatedEntries.length >= 2;
 
             return (
               <div
-                key={i}
-                className="bg-card rounded-2xl shadow-card border border-border overflow-hidden hover:shadow-elevated transition-shadow"
+                key={originalIndex}
+                className={`rounded-2xl shadow-card border overflow-hidden hover:shadow-elevated transition-shadow ${
+                  isBestFit
+                    ? "bg-card border-primary/30 ring-2 ring-primary/20"
+                    : "bg-card border-border"
+                }`}
               >
+                {isBestFit && (
+                  <div className="gradient-primary px-4 py-1.5 flex items-center gap-2">
+                    <Trophy className="w-3.5 h-3.5 text-primary-foreground" />
+                    <span className="text-xs font-semibold text-primary-foreground uppercase tracking-wider">
+                      Best Fit Prospect
+                    </span>
+                  </div>
+                )}
                 {/* Header */}
                 <div className="p-5 border-b border-border flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3 min-w-0">
