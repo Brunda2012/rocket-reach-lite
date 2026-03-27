@@ -34,7 +34,7 @@ serve(async (req) => {
       formattedUrl = `https://${formattedUrl}`;
     }
     const baseUrl = formattedUrl.replace(/\/+$/, "");
-    const subPaths = ["/about", "/about-us", "/careers", "/jobs", "/blog"];
+    const subPaths = ["/about", "/about-us", "/careers", "/jobs", "/blog", "/contact", "/contact-us"];
 
     function stripHtml(html: string): string {
       return html
@@ -58,6 +58,41 @@ serve(async (req) => {
       } catch {
         return "";
       }
+    }
+
+    async function fetchRawHtml(pageUrl: string): Promise<string> {
+      try {
+        const res = await fetch(pageUrl, {
+          headers: { "User-Agent": "Mozilla/5.0 (compatible; ProspectBot/1.0)" },
+          redirect: "follow",
+        });
+        if (!res.ok) return "";
+        return await res.text();
+      } catch {
+        return "";
+      }
+    }
+
+    function extractContacts(html: string, base: string) {
+      const emails = [...new Set((html.match(/[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/g) || [])
+        .filter(e => !e.endsWith(".png") && !e.endsWith(".jpg") && !e.endsWith(".svg") && !e.includes("example")))];
+      const phones = [...new Set((html.match(/(?:\+?1[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}/g) || [])
+        .map(p => p.trim()))];
+      const formMatches = html.match(/<form[^>]*action=["']([^"']+)["'][^>]*/gi) || [];
+      const formUrls = [...new Set(formMatches.map(m => {
+        const match = m.match(/action=["']([^"']+)["']/i);
+        if (!match) return null;
+        const action = match[1];
+        if (action.startsWith("http")) return action;
+        if (action.startsWith("/")) return base + action;
+        return null;
+      }).filter(Boolean) as string[])];
+      // Also detect contact page URLs themselves as form URLs
+      const contactPageUrls: string[] = [];
+      if (html.includes("<form")) {
+        contactPageUrls.push(base + "/contact");
+      }
+      return { emails: emails.slice(0, 5), phones: phones.slice(0, 5), formUrls: [...new Set([...formUrls, ...contactPageUrls])].slice(0, 3) };
     }
 
     // 2. Fetch homepage + sub-pages in parallel
@@ -97,6 +132,15 @@ serve(async (req) => {
     }
 
     const combinedText = (visibleText + linkedinText).slice(0, 14000);
+
+    // 4. Extract public contacts from contact pages
+    const contactPaths = ["/contact", "/contact-us"];
+    const contactHtmls = await Promise.all(contactPaths.map(p => fetchRawHtml(`${baseUrl}${p}`)));
+    // Also check homepage raw HTML for contacts
+    const homepageHtml = await fetchRawHtml(baseUrl);
+    const allContactHtml = [homepageHtml, ...contactHtmls].join("\n");
+    const publicContacts = extractContacts(allContactHtml, baseUrl);
+    console.log(`Contacts found: ${publicContacts.emails.length} emails, ${publicContacts.phones.length} phones, ${publicContacts.formUrls.length} forms`);
 
     // 3. Send to LLM with structured output
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -238,6 +282,7 @@ Keep everything short, specific, and non-salesy.`,
         whyItMatters: result.personaStarters?.whyItMatters,
         confidenceScore: result.confidenceScore,
         suitabilityScore: result.suitabilityScore,
+        publicContacts,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
