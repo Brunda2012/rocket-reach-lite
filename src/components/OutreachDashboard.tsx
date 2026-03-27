@@ -1,6 +1,6 @@
 import { useState } from "react";
 import {
-  Send, Loader2, Copy, Check, Mail, Phone, ExternalLink, Star, Building2,
+  Send, Loader2, Copy, Check, Mail, Phone, ExternalLink, Star, Building2, ClipboardList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
