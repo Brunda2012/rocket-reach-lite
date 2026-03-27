@@ -11,7 +11,7 @@ interface DiscoveredCompany {
 }
 
 interface CompanyDiscoveryProps {
-  onSelectCompanies: (urls: string[]) => void;
+  onSelectCompanies: (urls: string[], theme?: string) => void;
 }
 
 const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
@@ -53,7 +53,7 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
 
   const handleAnalyze = () => {
     const urls = Array.from(selected).map((i) => companies[i].website);
-    onSelectCompanies(urls);
+    onSelectCompanies(urls, theme);
   };
 
   return (

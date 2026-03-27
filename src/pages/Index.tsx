@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [snapshots, setSnapshots] = useState<SnapshotResult[]>([]);
+  const [userTheme, setUserTheme] = useState<string | undefined>();
   const inputRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -40,8 +41,9 @@ const Index = () => {
             whyItMatters: data.whyItMatters,
             confidenceScore: data.confidenceScore ?? 0,
             suitabilityScore: data.suitabilityScore ?? 0,
-            publicContacts: data.publicContacts,
-          } as SnapshotResult;
+             publicContacts: data.publicContacts,
+             prospectEmail: prospectEmail,
+           } as SnapshotResult;
 
           // Store in database
           await supabase.from("prospect_snapshots" as any).insert({
@@ -68,7 +70,8 @@ const Index = () => {
     }
   };
 
-  const handleDiscoverySelect = (urls: string[]) => {
+  const handleDiscoverySelect = (urls: string[], theme?: string) => {
+    if (theme) setUserTheme(theme);
     handleGenerate(urls.map((url) => ({ url, prospectEmail: "" })));
     inputRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -78,7 +81,7 @@ const Index = () => {
       <HeroSection onScrollToInput={scrollToInput} />
       <CompanyInput ref={inputRef} onSubmit={handleGenerate} isLoading={isLoading} />
       <CompanyDiscovery onSelectCompanies={handleDiscoverySelect} />
-      {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} />}
+      {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} userTheme={userTheme} />}
       {snapshots.length >= 2 && <ComparisonBoard snapshots={snapshots} />}
     </div>
   );

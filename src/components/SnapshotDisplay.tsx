@@ -1,10 +1,12 @@
 import {
   MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code,
   Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2,
-  Zap, Copy, Check, ClipboardList, Download, Mail, Phone, ExternalLink
+  Zap, Copy, Check, ClipboardList, Download, Mail, Phone, ExternalLink,
+  Send, Loader2, Star
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface CompanyProfile {
   industry: string;
@@ -34,6 +36,14 @@ export interface PublicContacts {
   formUrls: string[];
 }
 
+export interface OutreachEmail {
+  subject: string;
+  emailBody: string;
+  recommendedRecipient: string;
+  reasoning: string;
+  relevanceScore: number;
+}
+
 export interface SnapshotResult {
   companyProfile: CompanyProfile;
   signals: SnapshotSignals;
@@ -44,6 +54,7 @@ export interface SnapshotResult {
   confidenceScore: number;
   suitabilityScore: number;
   publicContacts?: PublicContacts;
+  prospectEmail?: string;
 }
 
 /* ── helpers ── */
@@ -117,9 +128,31 @@ function buildPlainText(data: SnapshotResult): string {
 }
 
 /* ── main component ── */
-const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
+const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?: string }) => {
   const profile = data.companyProfile;
   const [copiedAll, setCopiedAll] = useState(false);
+  const [outreach, setOutreach] = useState<OutreachEmail | null>(null);
+  const [outreachLoading, setOutreachLoading] = useState(false);
+
+  const generateOutreach = async () => {
+    setOutreachLoading(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke("generate-outreach", {
+        body: {
+          snapshot: data,
+          prospectEmail: data.prospectEmail,
+          userTheme,
+        },
+      });
+      if (error) throw error;
+      if (result?.error) throw new Error(result.error);
+      setOutreach(result);
+    } catch (e) {
+      console.error("Outreach generation failed:", e);
+    } finally {
+      setOutreachLoading(false);
+    }
+  };
 
   const score = data.confidenceScore ?? 0;
   const scoreColor = score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive";
@@ -425,8 +458,79 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
           </div>
         )}
 
+        {/* ── Outreach Email Generator ── */}
+        <div className="animate-fade-in-up stagger-7 bg-card rounded-2xl shadow-card border border-border p-6">
+          <SectionHeader icon={Send} title="Outreach Email" accent="bg-primary/10 text-primary" />
+          {!outreach ? (
+            <Button
+              onClick={generateOutreach}
+              disabled={outreachLoading}
+              className="w-full gap-2 gradient-primary text-primary-foreground"
+            >
+              {outreachLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Crafting personalized email...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4" />
+                  Generate Outreach Email
+                </>
+              )}
+            </Button>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Star className="w-4 h-4 text-warning" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                    Relevance: {outreach.relevanceScore}/100
+                  </span>
+                </div>
+                <CopyButton text={`Subject: ${outreach.subject}\n\n${outreach.emailBody}`} />
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Subject</p>
+                <p className="text-sm font-semibold text-foreground">{outreach.subject}</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">To</p>
+                <a href={`mailto:${outreach.recommendedRecipient}`} className="text-sm text-primary hover:underline">
+                  {outreach.recommendedRecipient}
+                </a>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Email Body</p>
+                <div className="bg-secondary/50 rounded-xl p-4 text-sm text-foreground/85 leading-relaxed whitespace-pre-line">
+                  {outreach.emailBody}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-[11px] font-medium uppercase tracking-widest text-muted-foreground">Why This Email Works</p>
+                <p className="text-xs text-muted-foreground italic">{outreach.reasoning}</p>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={generateOutreach}
+                disabled={outreachLoading}
+                className="gap-2"
+              >
+                {outreachLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                Regenerate
+              </Button>
+            </div>
+          )}
+        </div>
+
         {/* ── Why This Matters ── */}
-        <div className="animate-fade-in-up stagger-7 gradient-primary rounded-2xl p-6 shadow-glow">
+        <div className="animate-fade-in-up stagger-8 gradient-primary rounded-2xl p-6 shadow-glow">
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-8 h-8 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <Target className="w-4 h-4 text-primary-foreground" />
