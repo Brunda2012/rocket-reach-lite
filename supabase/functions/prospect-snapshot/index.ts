@@ -82,6 +82,22 @@ serve(async (req) => {
 
     console.log(`Scraped ${sections.length} pages, total ${visibleText.length} chars`);
 
+    // 2b. Optionally fetch LinkedIn page
+    let linkedinText = "";
+    if (linkedinUrl) {
+      let formattedLinkedin = linkedinUrl.trim();
+      if (!formattedLinkedin.startsWith("http")) {
+        formattedLinkedin = `https://${formattedLinkedin}`;
+      }
+      const liText = await fetchPage(formattedLinkedin);
+      if (liText && liText.length > 100) {
+        linkedinText = `\n\n---\n\n[LinkedIn Profile]\n${liText.slice(0, 3000)}`;
+        console.log(`LinkedIn content: ${linkedinText.length} chars`);
+      }
+    }
+
+    const combinedText = (visibleText + linkedinText).slice(0, 14000);
+
     // 3. Send to LLM with structured output
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
