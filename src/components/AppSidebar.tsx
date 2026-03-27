@@ -1,4 +1,4 @@
-import { Search, Send, BarChart3, Sparkles, Settings, HelpCircle } from "lucide-react";
+import { Search, Send, BarChart3, Sparkles, Settings, HelpCircle, Mail } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import {
@@ -18,6 +18,7 @@ const mainItems = [
   { title: "Analyze", url: "/dashboard", icon: Search, description: "Company intelligence" },
   { title: "Discover", url: "/discover", icon: Sparkles, description: "Find prospects" },
   { title: "Outreach", url: "/outreach", icon: Send, description: "Email campaigns" },
+  { title: "Email Pack", url: "/email-pack", icon: Mail, description: "All generated emails" },
   { title: "Insights", url: "/insights", icon: BarChart3, description: "View history" },
 ];
 
