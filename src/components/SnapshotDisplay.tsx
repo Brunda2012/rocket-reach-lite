@@ -176,49 +176,19 @@ const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?
             </div>
           </div>
 
-          {/* Confidence Score Badge */}
-          <div className="flex items-center gap-3 bg-card rounded-2xl shadow-card border border-border px-5 py-3">
-            <div className="text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Confidence</p>
-              <p className={`text-xs font-bold ${scoreColor}`}>{scoreLabel}</p>
+          {/* Score Badges */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-secondary/60 rounded-lg px-3 py-2">
+              <div className="text-right">
+                <p className="text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">Confidence</p>
+                <p className={`text-xs font-bold ${scoreColor}`}>{score}/100</p>
+              </div>
             </div>
-            <div className="relative w-12 h-12">
-              <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" />
-                <circle
-                  cx="24" cy="24" r="20" fill="none" strokeWidth="3"
-                  strokeDasharray={`${(score / 100) * 125.66} 125.66`}
-                  strokeLinecap="round"
-                  className={scoreColor}
-                  stroke="currentColor"
-                />
-              </svg>
-              <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${scoreColor}`}>
-                {score}
-              </span>
-            </div>
-          </div>
-
-          {/* Suitability Score Badge */}
-          <div className="flex items-center gap-3 bg-card rounded-2xl shadow-card border border-border px-5 py-3">
-            <div className="text-right">
-              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Suitability</p>
-              <p className={`text-xs font-bold ${suitColor}`}>{suitLabel}</p>
-            </div>
-            <div className="relative w-12 h-12">
-              <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
-                <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" />
-                <circle
-                  cx="24" cy="24" r="20" fill="none" strokeWidth="3"
-                  strokeDasharray={`${(suit / 100) * 125.66} 125.66`}
-                  strokeLinecap="round"
-                  className={suitColor}
-                  stroke="currentColor"
-                />
-              </svg>
-              <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${suitColor}`}>
-                {suit}
-              </span>
+            <div className="flex items-center gap-2 bg-secondary/60 rounded-lg px-3 py-2">
+              <div className="text-right">
+                <p className="text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">Suitability</p>
+                <p className={`text-xs font-bold ${suitColor}`}>{suit}/100</p>
+              </div>
             </div>
           </div>
         </div>
