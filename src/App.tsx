@@ -10,6 +10,8 @@ import Insights from "./pages/Insights.tsx";
 import CompanyProfile from "./pages/CompanyProfile.tsx";
 import OutreachEngine from "./pages/OutreachEngine.tsx";
 import EmailPack from "./pages/EmailPack.tsx";
+import Settings from "./pages/Settings.tsx";
+import Help from "./pages/Help.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
           <Route path="/company" element={<CompanyProfile />} />
           <Route path="/outreach" element={<OutreachEngine />} />
           <Route path="/email-pack" element={<EmailPack />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
