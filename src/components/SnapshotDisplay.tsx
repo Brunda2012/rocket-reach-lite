@@ -34,6 +34,7 @@ export interface SnapshotResult {
   insights: string[];
   conversationStarters: ConversationStarters;
   whyItMatters: string;
+  confidenceScore: number;
 }
 
 /* ── helpers ── */
