@@ -159,13 +159,14 @@ Input: Raw text scraped from multiple pages of the company's website (homepage, 
 Return a structured JSON object with these exact sections:
 
 1. companyOverview — industry, estimated size (Startup/SMB/Mid-Market/Enterprise), 5-8 defining keywords, and brand tone in 2-3 words.
-2. strategicSignals — five categories: hiringSignals (open roles, team growth), techStack (technologies used), strategicInitiatives (key moves, launches, partnerships), painPoints (challenges inferred from content), growthIndicators (funding, expansion, revenue signals). Each is an array of concise strings.
-3. recentChanges — anything new, changing, or recently updated: product launches, leadership changes, partnerships, announcements, events. Look for dates, "new", "announcing", "just launched", etc.
-4. keyPeople — extract real people mentioned on the website: founders, executives, team leads, board members. For each person include their full name, role/title, and email if visible. Also look for LinkedIn profile URLs. Extract as many as you can find (up to 10). If no people are found, return an empty array.
-5. keyInsights — 3-6 actionable insights about the company: competitive advantages, market positioning, unique value props, strategic priorities, or vulnerabilities. Each should be a concise sentence.
-6. personaStarters — 4 conversation openers each tailored to a persona: CTO (tech/architecture), CEO (strategy/vision), Head of Operations (efficiency/scale), Head of Sales (pipeline/revenue). Plus a whyItMatters sentence.
-7. confidenceScore — 0-100 based on data completeness. 90+ = rich multi-page data. 60-89 = decent but gaps. <60 = sparse/generic.
-8. suitabilityScore — 0-100 rating of how promising this company is as a prospect. Weight: industry fit & relevance (25%), growth indicators strength (25%), hiring activity level (25%), pain points that suggest need for solutions (25%). 90+ = exceptional prospect. 70-89 = strong. 50-69 = moderate. <50 = weak fit.
+2. helpfulFor — classify who this organisation is most helpful for. Return an array with one or more of: "Startups", "Students", "Job Seekers", "Researchers", "Innovators", "Founders", "Investors", "Employees", "Corporates", "Early-stage Entrepreneurs". Analyze the website content to determine this.
+3. strategicSignals — five categories: hiringSignals (open roles, team growth), techStack (technologies used), strategicInitiatives (key moves, launches, partnerships), painPoints (challenges inferred from content), growthIndicators (funding, expansion, revenue signals). Each is an array of concise strings.
+4. recentChanges — anything new, changing, or recently updated: product launches, leadership changes, partnerships, announcements, events. Look for dates, "new", "announcing", "just launched", etc.
+5. keyPeople — extract real people mentioned on the website: founders, executives, team leads, board members. For each person include their full name, role/title, and email if visible. Also look for LinkedIn profile URLs. Extract as many as you can find (up to 10). If no people are found, return an empty array.
+6. keyInsights — 3-6 actionable insights about the company: competitive advantages, market positioning, unique value props, strategic priorities, or vulnerabilities. Each should be a concise sentence.
+7. personaStarters — 4 conversation openers each tailored to a persona: CTO (tech/architecture), CEO (strategy/vision), Head of Operations (efficiency/scale), Head of Sales (pipeline/revenue). Plus a whyItMatters sentence.
+8. confidenceScore — 0-100 based on data completeness. 90+ = rich multi-page data. 60-89 = decent but gaps. <60 = sparse/generic.
+9. suitabilityScore — 0-100 rating of how promising this company is as a prospect. Weight: industry fit & relevance (25%), growth indicators strength (25%), hiring activity level (25%), pain points that suggest need for solutions (25%). 90+ = exceptional prospect. 70-89 = strong. 50-69 = moderate. <50 = weak fit.
 
 Keep everything short, specific, and non-salesy. For keyPeople, ONLY include real names found in the scraped text — never fabricate names or emails.`,
           },
@@ -194,6 +195,11 @@ Keep everything short, specific, and non-salesy. For keyPeople, ONLY include rea
                     },
                     required: ["industry", "companySize", "keywords", "tone"],
                     additionalProperties: false,
+                  },
+                  helpfulFor: {
+                    type: "array",
+                    items: { type: "string", enum: ["Startups", "Students", "Job Seekers", "Researchers", "Innovators", "Founders", "Investors", "Employees", "Corporates", "Early-stage Entrepreneurs"] },
+                    description: "Who this organisation is most helpful for",
                   },
                   strategicSignals: {
                     type: "object",
@@ -255,7 +261,7 @@ Keep everything short, specific, and non-salesy. For keyPeople, ONLY include rea
                     description: "0-100 prospect suitability score based on industry fit, growth signals, hiring activity, and pain points",
                   },
                 },
-                required: ["companyOverview", "strategicSignals", "recentChanges", "keyPeople", "keyInsights", "personaStarters", "confidenceScore", "suitabilityScore"],
+                required: ["companyOverview", "helpfulFor", "strategicSignals", "recentChanges", "keyPeople", "keyInsights", "personaStarters", "confidenceScore", "suitabilityScore"],
                 additionalProperties: false,
               },
             },
@@ -290,8 +296,14 @@ Keep everything short, specific, and non-salesy. For keyPeople, ONLY include rea
     if (toolCall?.function?.arguments) {
       const result = JSON.parse(toolCall.function.arguments);
       // Map new schema to frontend-expected keys for backward compat
+      // Extract address from contact page text
+      const addressMatch = allContactHtml.match(/\d{1,5}\s[\w\s.,-]+(?:Street|St|Avenue|Ave|Road|Rd|Boulevard|Blvd|Drive|Dr|Lane|Ln|Way|Place|Pl|Suite|Ste|Floor|Fl)[^<]{0,80}/i);
+      const address = addressMatch ? addressMatch[0].trim().slice(0, 120) : undefined;
+      const contactFormUrl = publicContacts.formUrls?.[0] || undefined;
+
       return new Response(JSON.stringify({
         companyProfile: result.companyOverview,
+        helpfulFor: result.helpfulFor || [],
         signals: result.strategicSignals,
         recentChanges: result.recentChanges,
         insights: result.keyInsights || [],
@@ -305,7 +317,11 @@ Keep everything short, specific, and non-salesy. For keyPeople, ONLY include rea
         confidenceScore: result.confidenceScore,
         suitabilityScore: result.suitabilityScore,
         keyPeople: result.keyPeople || [],
-        publicContacts,
+        publicContacts: {
+          ...publicContacts,
+          address,
+          contactFormUrl,
+        },
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
