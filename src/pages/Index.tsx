@@ -1,4 +1,6 @@
 import { useRef, useState } from "react";
+import DashboardLayout from "@/components/DashboardLayout";
+import TopNav from "@/components/TopNav";
 import HeroSection from "@/components/HeroSection";
 import CompanyInput, { type CompanyEntry } from "@/components/CompanyInput";
 import CompanyDiscovery from "@/components/CompanyDiscovery";
@@ -44,11 +46,10 @@ const Index = () => {
             whyItMatters: data.whyItMatters,
             confidenceScore: data.confidenceScore ?? 0,
             suitabilityScore: data.suitabilityScore ?? 0,
-             publicContacts: data.publicContacts,
-             prospectEmail: prospectEmail,
-           } as SnapshotResult;
+            publicContacts: data.publicContacts,
+            prospectEmail: prospectEmail,
+          } as SnapshotResult;
 
-          // Store in database
           await supabase.from("prospect_snapshots" as any).insert({
             url,
             company_profile: snapshot.companyProfile,
@@ -81,16 +82,25 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <HeroSection onScrollToInput={scrollToInput} />
-      <CompanyInput ref={inputRef} onSubmit={handleGenerate} isLoading={isLoading} />
-      <CompanyDiscovery onSelectCompanies={handleDiscoverySelect} />
-      {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} userTheme={userTheme} />}
-      {snapshots.length >= 2 && <ComparisonBoard snapshots={snapshots} />}
-      {snapshots.length > 0 && (
-        <OutreachDashboard snapshots={snapshots} urls={analyzedUrls} userTheme={userTheme} />
-      )}
-    </div>
+    <DashboardLayout>
+      <TopNav title="Analyze" description="Company intelligence & outreach" />
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-5xl mx-auto p-6 space-y-6">
+          <HeroSection onScrollToInput={scrollToInput} />
+
+          <div className="grid gap-6 lg:grid-cols-[1fr_1fr]">
+            <CompanyInput ref={inputRef} onSubmit={handleGenerate} isLoading={isLoading} />
+            <CompanyDiscovery onSelectCompanies={handleDiscoverySelect} />
+          </div>
+
+          {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} userTheme={userTheme} />}
+          {snapshots.length >= 2 && <ComparisonBoard snapshots={snapshots} />}
+          {snapshots.length > 0 && (
+            <OutreachDashboard snapshots={snapshots} urls={analyzedUrls} userTheme={userTheme} />
+          )}
+        </div>
+      </main>
+    </DashboardLayout>
   );
 };
 
