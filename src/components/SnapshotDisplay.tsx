@@ -83,6 +83,31 @@ function SectionHeader({ icon: Icon, title, accent }: { icon: React.ElementType;
   );
 }
 
+/* ── helpers for export ── */
+function buildPlainText(data: SnapshotResult): string {
+  const p = data.companyProfile;
+  let text = `PROSPECT SNAPSHOT\n${"=".repeat(40)}\n\n`;
+  text += `COMPANY PROFILE\nIndustry: ${p.industry}\nSize: ${p.companySize}\nTone: ${p.tone}\nKeywords: ${p.keywords?.join(", ") || "N/A"}\n\n`;
+
+  if (data.recentChanges?.length) {
+    text += `WHAT'S NEW\n${data.recentChanges.map((c) => `• ${c}`).join("\n")}\n\n`;
+  }
+
+  for (const { key, label } of signalSections) {
+    const items = data.signals?.[key];
+    if (items?.length) text += `${label.toUpperCase()}\n${items.map((s) => `• ${s}`).join("\n")}\n\n`;
+  }
+
+  text += `KEY INSIGHTS\n${data.insights.map((ins, i) => `${i + 1}. ${ins}`).join("\n")}\n\n`;
+  text += `CONVERSATION STARTERS\n`;
+  for (const { key, label } of personaLabels) {
+    const t = data.conversationStarters?.[key];
+    if (t) text += `${label}: "${t}"\n`;
+  }
+  text += `\nWHY THIS MATTERS\n${data.whyItMatters}\n\nConfidence Score: ${data.confidenceScore ?? 0}/100`;
+  return text;
+}
+
 /* ── main component ── */
 const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
   const profile = data.companyProfile;
