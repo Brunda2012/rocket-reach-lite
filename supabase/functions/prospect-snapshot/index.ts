@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json();
+    const { url, linkedinUrl } = await req.json();
     if (!url) {
       return new Response(JSON.stringify({ error: "url is required" }), {
         status: 400,
