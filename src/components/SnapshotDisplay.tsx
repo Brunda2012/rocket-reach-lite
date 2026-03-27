@@ -1,10 +1,27 @@
-import { MessageSquare, Target, CheckCircle, Sparkles } from "lucide-react";
+import { MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code, Rocket, AlertTriangle, TrendingUp } from "lucide-react";
+
+export interface SnapshotSignals {
+  hiringSignals: string[];
+  techStack: string[];
+  strategicInitiatives: string[];
+  painPoints: string[];
+  growthIndicators: string[];
+}
 
 export interface SnapshotResult {
+  signals: SnapshotSignals;
   insights: string[];
   conversationStarter: string;
   whyItMatters: string;
 }
+
+const signalSections = [
+  { key: "hiringSignals" as const, label: "Hiring Signals", icon: Briefcase, color: "text-primary" },
+  { key: "techStack" as const, label: "Tech Stack", icon: Code, color: "text-primary" },
+  { key: "strategicInitiatives" as const, label: "Strategic Initiatives", icon: Rocket, color: "text-primary" },
+  { key: "painPoints" as const, label: "Pain Points", icon: AlertTriangle, color: "text-destructive" },
+  { key: "growthIndicators" as const, label: "Growth Indicators", icon: TrendingUp, color: "text-accent" },
+];
 
 const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
   return (
@@ -19,7 +36,33 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
         </div>
 
         <div className="divide-y divide-border">
-          {/* Section: Key Insights */}
+          {/* Signals Grid */}
+          <div className="px-8 py-6">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+              Signals
+            </h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {signalSections.map(({ key, label, icon: Icon, color }) => {
+                const items = data.signals?.[key];
+                if (!items || items.length === 0) return null;
+                return (
+                  <div key={key} className="bg-secondary/50 rounded-xl p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Icon className={`w-4 h-4 ${color}`} />
+                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</span>
+                    </div>
+                    <ul className="space-y-1">
+                      {items.map((item, i) => (
+                        <li key={i} className="text-sm text-foreground/80 leading-relaxed">• {item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Key Insights */}
           <div className="px-8 py-6">
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4">
               Key Insights
@@ -34,7 +77,7 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
             </ul>
           </div>
 
-          {/* Section: Conversation Starter */}
+          {/* Conversation Starter */}
           <div className="px-8 py-6">
             <div className="flex items-center gap-2 mb-3">
               <MessageSquare className="w-4 h-4 text-primary" />
@@ -49,7 +92,7 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
             </div>
           </div>
 
-          {/* Section: Why This Matters */}
+          {/* Why This Matters */}
           <div className="px-8 py-6">
             <div className="flex items-center gap-2 mb-3">
               <Target className="w-4 h-4 text-accent" />
