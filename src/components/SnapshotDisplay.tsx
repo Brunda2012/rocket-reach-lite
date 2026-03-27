@@ -111,6 +111,7 @@ function buildPlainText(data: SnapshotResult): string {
 /* ── main component ── */
 const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
   const profile = data.companyProfile;
+  const [copiedAll, setCopiedAll] = useState(false);
 
   const score = data.confidenceScore ?? 0;
   const scoreColor = score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive";
