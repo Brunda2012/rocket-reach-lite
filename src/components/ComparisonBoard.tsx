@@ -80,7 +80,65 @@ function CompanyHeader({ data }: { data: SnapshotResult }) {
   );
 }
 
+function buildBoardText(snapshots: SnapshotResult[]): string {
+  return snapshots.map((s, idx) => {
+    const p = s.companyProfile;
+    let t = `COMPANY ${idx + 1}: ${p.industry}\nSize: ${p.companySize} | Tone: ${p.tone}\nKeywords: ${p.keywords?.join(", ") || "N/A"}\n`;
+    for (const { key, label } of signalSections) {
+      const items = s.signals?.[key];
+      if (items?.length) t += `\n${label.toUpperCase()}\n${items.map((i) => `• ${i}`).join("\n")}`;
+    }
+    if (s.recentChanges?.length) t += `\n\nRECENT CHANGES\n${s.recentChanges.map((c) => `• ${c}`).join("\n")}`;
+    for (const { key, label } of personas) {
+      const v = s.conversationStarters?.[key];
+      if (v) t += `\n${label}: "${v}"`;
+    }
+    if (s.whyItMatters) t += `\nWhy It Matters: ${s.whyItMatters}`;
+    t += `\nConfidence: ${s.confidenceScore ?? 0}/100`;
+    return t;
+  }).join("\n\n" + "=".repeat(50) + "\n\n");
+}
+
+function openPrintablePdf(snapshots: SnapshotResult[]) {
+  const w = window.open("", "_blank");
+  if (!w) return;
+  const css = `body{font-family:system-ui,sans-serif;max-width:900px;margin:40px auto;padding:20px;color:#1a1a1a;font-size:13px;line-height:1.5}h1{font-size:20px;border-bottom:2px solid #6366f1;padding-bottom:6px}h2{font-size:15px;margin-top:20px;color:#6366f1}h3{font-size:13px;margin-top:12px;color:#444}table{width:100%;border-collapse:collapse;margin:8px 0}td,th{border:1px solid #e5e7eb;padding:8px;vertical-align:top;font-size:12px}th{background:#f9fafb;text-align:left;font-weight:600}.score{display:inline-block;background:#6366f1;color:white;padding:1px 8px;border-radius:10px;font-weight:bold;font-size:12px}.green{background:#f0fdf4}.yellow{background:#fefce8}.red{background:#fef2f2}.blue{background:#eff6ff}`;
+  let html = `<!DOCTYPE html><html><head><title>Comparison Board</title><style>${css}</style></head><body><h1>Prospect Comparison Board</h1>`;
+
+  // Overview table
+  html += `<h2>Company Overview</h2><table><tr>${snapshots.map((s) => `<th>${s.companyProfile.industry}</th>`).join("")}</tr>`;
+  html += `<tr>${snapshots.map((s) => `<td>Size: ${s.companyProfile.companySize}<br>Tone: ${s.companyProfile.tone}<br>Keywords: ${s.companyProfile.keywords?.join(", ")}</td>`).join("")}</tr></table>`;
+
+  // Signals
+  const colorMap: Record<string, string> = { hiringSignals: "yellow", techStack: "blue", strategicInitiatives: "blue", painPoints: "red", growthIndicators: "green" };
+  html += `<h2>Strategic Signals</h2>`;
+  for (const { key, label } of signalSections) {
+    const hasAny = snapshots.some((s) => s.signals?.[key]?.length > 0);
+    if (!hasAny) continue;
+    html += `<h3>${label}</h3><table><tr>${snapshots.map((s) => `<td class="${colorMap[key]}">${(s.signals?.[key] || []).map((i) => `• ${i}`).join("<br>") || "<em>No data</em>"}</td>`).join("")}</tr></table>`;
+  }
+
+  // Recent Changes
+  html += `<h2>Recent Changes</h2><table><tr>${snapshots.map((s) => `<td>${(s.recentChanges || []).map((c) => `• ${c}`).join("<br>") || "<em>None</em>"}</td>`).join("")}</tr></table>`;
+
+  // Persona Starters
+  html += `<h2>Persona-Based Starters</h2>`;
+  for (const { key, label, emoji } of personas) {
+    html += `<h3>${emoji} ${label}</h3><table><tr>${snapshots.map((s) => `<td><em>"${s.conversationStarters?.[key] || "—"}"</em></td>`).join("")}</tr></table>`;
+  }
+  html += `<h3>💡 Why It Matters</h3><table><tr>${snapshots.map((s) => `<td>${s.whyItMatters || "—"}</td>`).join("")}</tr></table>`;
+
+  // Confidence
+  html += `<h2>Confidence Score</h2><table><tr>${snapshots.map((s) => `<td><span class="score">${s.confidenceScore ?? 0}/100</span></td>`).join("")}</tr></table>`;
+
+  html += `</body></html>`;
+  w.document.write(html);
+  w.document.close();
+  w.print();
+}
+
 const ComparisonBoard = ({ snapshots }: { snapshots: SnapshotResult[] }) => {
+  const [copiedAll, setCopiedAll] = useState(false);
   const cols = snapshots.length;
   const gridCols = cols === 2 ? "grid-cols-2" : cols === 3 ? "grid-cols-3" : "grid-cols-4";
 
@@ -88,13 +146,39 @@ const ComparisonBoard = ({ snapshots }: { snapshots: SnapshotResult[] }) => {
     <section className="py-16 px-4">
       <div className="max-w-6xl mx-auto space-y-6">
         {/* Header */}
-        <div className="animate-fade-in-up flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+        <div className="animate-fade-in-up flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
+              <Sparkles className="w-5 h-5 text-primary-foreground" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">Comparison Board</h2>
+              <p className="text-xs text-muted-foreground">Side-by-side intelligence for {cols} companies</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl font-bold text-foreground tracking-tight">Comparison Board</h2>
-            <p className="text-xs text-muted-foreground">Side-by-side intelligence for {cols} companies</p>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={async () => {
+                await navigator.clipboard.writeText(buildBoardText(snapshots));
+                setCopiedAll(true);
+                setTimeout(() => setCopiedAll(false), 2000);
+              }}
+            >
+              {copiedAll ? <Check className="w-4 h-4 text-success" /> : <ClipboardList className="w-4 h-4" />}
+              {copiedAll ? "Copied!" : "Copy Board"}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-2"
+              onClick={() => openPrintablePdf(snapshots)}
+            >
+              <Download className="w-4 h-4" />
+              Download PDF
+            </Button>
           </div>
         </div>
 
