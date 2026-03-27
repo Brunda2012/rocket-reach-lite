@@ -4,12 +4,14 @@ import CompanyInput, { type CompanyEntry } from "@/components/CompanyInput";
 import CompanyDiscovery from "@/components/CompanyDiscovery";
 import SnapshotDisplay, { type SnapshotResult } from "@/components/SnapshotDisplay";
 import ComparisonBoard from "@/components/ComparisonBoard";
+import OutreachDashboard from "@/components/OutreachDashboard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [snapshots, setSnapshots] = useState<SnapshotResult[]>([]);
+  const [analyzedUrls, setAnalyzedUrls] = useState<string[]>([]);
   const [userTheme, setUserTheme] = useState<string | undefined>();
   const inputRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -21,6 +23,7 @@ const Index = () => {
   const handleGenerate = async (entries: CompanyEntry[], linkedinUrl?: string) => {
     setIsLoading(true);
     setSnapshots([]);
+    setAnalyzedUrls([]);
 
     try {
       const results = await Promise.all(
@@ -62,7 +65,7 @@ const Index = () => {
         })
       );
       setSnapshots(results);
-    } catch (err: unknown) {
+      setAnalyzedUrls(entries.map((e) => e.url));
       const message = err instanceof Error ? err.message : "Could not analyze the URLs.";
       toast({ title: "Error", description: message, variant: "destructive" });
     } finally {
@@ -83,7 +86,9 @@ const Index = () => {
       <CompanyDiscovery onSelectCompanies={handleDiscoverySelect} />
       {snapshots.length === 1 && <SnapshotDisplay data={snapshots[0]} userTheme={userTheme} />}
       {snapshots.length >= 2 && <ComparisonBoard snapshots={snapshots} />}
-    </div>
+      {snapshots.length > 0 && (
+        <OutreachDashboard snapshots={snapshots} urls={analyzedUrls} userTheme={userTheme} />
+      )}
   );
 };
 
