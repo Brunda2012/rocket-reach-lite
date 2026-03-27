@@ -198,8 +198,8 @@ Keep everything short, specific, and non-salesy.`,
 
     if (toolCall?.function?.arguments) {
       const result = JSON.parse(toolCall.function.arguments);
-      // 4. Return exact format: { insights, conversationStarter, whyItMatters }
       return new Response(JSON.stringify({
+        signals: result.signals,
         insights: result.insights,
         conversationStarter: result.conversationStarter,
         whyItMatters: result.whyItMatters,
