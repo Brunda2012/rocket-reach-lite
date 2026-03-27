@@ -119,6 +119,7 @@ Task:
 - Extract 3 concise, high-value insights about the company's focus, strategy, or priorities.
 - Write 4 personalized conversation starters, each tailored to a specific persona: CTO, CEO, Head of Operations, and Head of Sales. Each should reference relevant signals for that role.
 - Write 1 sentence explaining why this matters to them.
+- Assign a confidence score (0–100) based on how complete and reliable the extracted information is. Consider: how much content was available, how specific the signals are, whether data came from multiple pages, and whether key sections (about, careers, blog) were present. 90+ = rich multi-page data with clear signals. 60-89 = decent data but some gaps. Below 60 = sparse or generic content.
 Keep everything short, specific, and non-salesy.`,
           },
           {
@@ -206,8 +207,12 @@ Keep everything short, specific, and non-salesy.`,
                     type: "string",
                     description: "One sentence about why now is a good time to reach out",
                   },
+                  confidenceScore: {
+                    type: "number",
+                    description: "0-100 score reflecting how complete and reliable the extracted data is",
+                  },
                 },
-                required: ["companyProfile", "signals", "recentChanges", "insights", "conversationStarters", "whyItMatters"],
+                required: ["companyProfile", "signals", "recentChanges", "insights", "conversationStarters", "whyItMatters", "confidenceScore"],
                 additionalProperties: false,
               },
             },
@@ -248,6 +253,7 @@ Keep everything short, specific, and non-salesy.`,
         insights: result.insights,
         conversationStarters: result.conversationStarters,
         whyItMatters: result.whyItMatters,
+        confidenceScore: result.confidenceScore,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
