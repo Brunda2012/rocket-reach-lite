@@ -65,11 +65,17 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are an expert B2B sales intelligence analyst. Given website text from a prospect company, return structured prospect intelligence.`,
+            content: `You are an SDR doing research on a company.
+Input: Raw text scraped from the company's website.
+Task:
+- Extract 3 concise, high-value insights about the company's focus, strategy, or priorities.
+- Write 1 personalized conversation starter that references those insights.
+- Write 1 sentence explaining why this matters to them.
+Keep everything short, specific, and non-salesy.`,
           },
           {
             role: "user",
-            content: `Analyze this company and return prospect intelligence.\n\nURL: ${formattedUrl}\n\nVisible text:\n${visibleText}`,
+            content: `Here is the raw text scraped from ${formattedUrl}:\n\n${visibleText}`,
           },
         ],
         tools: [
