@@ -42,7 +42,7 @@ const Index = () => {
           } as SnapshotResult;
 
           // Store in database
-          await supabase.from("prospect_snapshots").insert({
+          await supabase.from("prospect_snapshots" as any).insert({
             url,
             company_profile: snapshot.companyProfile,
             signals: snapshot.signals,
@@ -51,7 +51,7 @@ const Index = () => {
             conversation_starters: snapshot.conversationStarters,
             why_it_matters: snapshot.whyItMatters,
             confidence_score: snapshot.confidenceScore,
-          });
+          } as any);
 
           return snapshot;
         })
