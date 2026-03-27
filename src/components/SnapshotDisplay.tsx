@@ -30,6 +30,13 @@ export interface ConversationStarters {
   headOfSales: string;
 }
 
+export interface KeyPerson {
+  name: string;
+  role: string;
+  email?: string;
+  linkedinUrl?: string;
+}
+
 export interface PublicContacts {
   emails: string[];
   phones: string[];
@@ -54,6 +61,7 @@ export interface SnapshotResult {
   confidenceScore: number;
   suitabilityScore: number;
   publicContacts?: PublicContacts;
+  keyPeople?: KeyPerson[];
   prospectEmail?: string;
 }
 
