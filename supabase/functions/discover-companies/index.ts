@@ -12,13 +12,14 @@ serve(async (req) => {
   }
 
   try {
-    const { theme } = await req.json();
+    const { theme, country } = await req.json();
     if (!theme || typeof theme !== "string" || theme.trim().length === 0) {
       return new Response(JSON.stringify({ error: "theme is required" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const countryFilter = country && typeof country === "string" ? country.trim() : null;
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -39,11 +40,11 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: `You are a B2B sales research assistant. Given a theme or industry interest, suggest 8 companies that match. Include a mix of well-known leaders and emerging/growing companies. For each company, provide its real name, actual website URL, a one-sentence description, and a brief reason why it matches the theme. Be factual — only suggest real companies you are confident exist.`,
+            content: `You are a B2B sales research assistant. Given a theme or industry interest, suggest 8 companies that match.${countryFilter ? ` Focus on companies based in or operating primarily in ${countryFilter}.` : ""} Include a mix of well-known leaders and emerging/growing companies. For each company, provide its real name, actual website URL, a one-sentence description, the country it is based in, and a brief reason why it matches the theme. Be factual — only suggest real companies you are confident exist.`,
           },
           {
             role: "user",
-            content: `Find companies matching this theme: "${theme.trim()}"`,
+            content: `Find companies matching this theme: "${theme.trim()}"${countryFilter ? ` in ${countryFilter}` : ""}`,
           },
         ],
         tools: [
@@ -64,8 +65,9 @@ serve(async (req) => {
                         website: { type: "string", description: "Company website URL" },
                         description: { type: "string", description: "One-sentence company description" },
                         whyItMatches: { type: "string", description: "Why this company matches the theme" },
+                        country: { type: "string", description: "Country where the company is headquartered" },
                       },
-                      required: ["name", "website", "description", "whyItMatches"],
+                      required: ["name", "website", "description", "whyItMatches", "country"],
                       additionalProperties: false,
                     },
                     description: "8 companies matching the theme, mix of established and emerging",

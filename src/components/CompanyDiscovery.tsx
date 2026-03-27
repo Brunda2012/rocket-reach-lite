@@ -8,13 +8,15 @@ interface DiscoveredCompany {
   website: string;
   description: string;
   whyItMatches: string;
+  country?: string;
 }
 
 interface CompanyDiscoveryProps {
   onSelectCompanies: (urls: string[], theme?: string) => void;
+  country?: string;
 }
 
-const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
+const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps) => {
   const [theme, setTheme] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [companies, setCompanies] = useState<DiscoveredCompany[]>([]);
@@ -29,7 +31,7 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
 
     try {
       const { data, error } = await supabase.functions.invoke("discover-companies", {
-        body: { theme: theme.trim() },
+        body: { theme: theme.trim(), country },
       });
       if (error) throw error;
       if (data?.companies) {
@@ -129,10 +131,15 @@ const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
                       </a>
                     </div>
                     <p className="text-[11px] text-muted-foreground leading-relaxed mb-1.5">{company.description}</p>
-                    <div className="flex items-start gap-1.5">
+                    <div className="flex items-start gap-1.5 mb-1">
                       <Globe className="w-2.5 h-2.5 text-primary mt-0.5 shrink-0" />
                       <span className="text-[10px] text-primary/80 leading-relaxed">{company.whyItMatches}</span>
                     </div>
+                    {company.country && (
+                      <span className="inline-block text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border">
+                        📍 {company.country}
+                      </span>
+                    )}
                   </button>
                 );
               })}
