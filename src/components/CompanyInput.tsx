@@ -2,8 +2,13 @@ import { useState, forwardRef } from "react";
 import { Globe, ArrowRight, Loader2, Linkedin, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+export interface CompanyEntry {
+  url: string;
+  prospectEmail: string;
+}
+
 interface CompanyInputProps {
-  onSubmit: (urls: string[], linkedinUrl?: string) => void;
+  onSubmit: (entries: CompanyEntry[], linkedinUrl?: string) => void;
   isLoading: boolean;
 }
 
