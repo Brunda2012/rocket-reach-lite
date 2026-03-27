@@ -311,7 +311,7 @@ const OutreachDashboard = ({
           })}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 
