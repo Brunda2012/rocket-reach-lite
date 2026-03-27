@@ -69,7 +69,7 @@ const Index = () => {
   };
 
   const handleDiscoverySelect = (urls: string[]) => {
-    handleGenerate(urls);
+    handleGenerate(urls.map((url) => ({ url, prospectEmail: "" })));
     inputRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
