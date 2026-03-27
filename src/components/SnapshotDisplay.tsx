@@ -1,7 +1,7 @@
 import {
   MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code,
   Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2,
-  Zap, Copy, Check, ClipboardList, Download
+  Zap, Copy, Check, ClipboardList, Download, Mail, Phone, ExternalLink
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,12 @@ export interface ConversationStarters {
   headOfSales: string;
 }
 
+export interface PublicContacts {
+  emails: string[];
+  phones: string[];
+  formUrls: string[];
+}
+
 export interface SnapshotResult {
   companyProfile: CompanyProfile;
   signals: SnapshotSignals;
@@ -37,6 +43,7 @@ export interface SnapshotResult {
   whyItMatters: string;
   confidenceScore: number;
   suitabilityScore: number;
+  publicContacts?: PublicContacts;
 }
 
 /* ── helpers ── */
@@ -376,8 +383,50 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
           </div>
         </div>
 
+        {/* ── Public Contacts ── */}
+        {data.publicContacts && (data.publicContacts.emails?.length > 0 || data.publicContacts.phones?.length > 0 || data.publicContacts.formUrls?.length > 0) && (
+          <div className="animate-fade-in-up stagger-6 bg-card rounded-2xl shadow-card border border-border p-6">
+            <SectionHeader icon={Mail} title="Public Contacts" accent="bg-info/10 text-info" />
+            <div className="grid gap-4 sm:grid-cols-3">
+              {data.publicContacts.emails?.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Mail className="w-3.5 h-3.5" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider">Emails</span>
+                  </div>
+                  {data.publicContacts.emails.map((email, i) => (
+                    <a key={i} href={`mailto:${email}`} className="block text-sm text-primary hover:underline truncate">{email}</a>
+                  ))}
+                </div>
+              )}
+              {data.publicContacts.phones?.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Phone className="w-3.5 h-3.5" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider">Phone Numbers</span>
+                  </div>
+                  {data.publicContacts.phones.map((phone, i) => (
+                    <a key={i} href={`tel:${phone}`} className="block text-sm text-primary hover:underline">{phone}</a>
+                  ))}
+                </div>
+              )}
+              {data.publicContacts.formUrls?.length > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    <span className="text-[11px] font-semibold uppercase tracking-wider">Contact Forms</span>
+                  </div>
+                  {data.publicContacts.formUrls.map((url, i) => (
+                    <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="block text-sm text-primary hover:underline truncate">{url}</a>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* ── Why This Matters ── */}
-        <div className="animate-fade-in-up stagger-6 gradient-primary rounded-2xl p-6 shadow-glow">
+        <div className="animate-fade-in-up stagger-7 gradient-primary rounded-2xl p-6 shadow-glow">
           <div className="flex items-center gap-2.5 mb-3">
             <div className="w-8 h-8 rounded-lg bg-primary-foreground/15 flex items-center justify-center">
               <Target className="w-4 h-4 text-primary-foreground" />
