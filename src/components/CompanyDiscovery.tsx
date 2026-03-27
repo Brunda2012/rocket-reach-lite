@@ -8,6 +8,7 @@ interface DiscoveredCompany {
   website: string;
   description: string;
   whyItMatches: string;
+  country?: string;
 }
 
 interface CompanyDiscoveryProps {
@@ -130,10 +131,15 @@ const CompanyDiscovery = ({ onSelectCompanies, country }: CompanyDiscoveryProps)
                       </a>
                     </div>
                     <p className="text-[11px] text-muted-foreground leading-relaxed mb-1.5">{company.description}</p>
-                    <div className="flex items-start gap-1.5">
+                    <div className="flex items-start gap-1.5 mb-1">
                       <Globe className="w-2.5 h-2.5 text-primary mt-0.5 shrink-0" />
                       <span className="text-[10px] text-primary/80 leading-relaxed">{company.whyItMatches}</span>
                     </div>
+                    {company.country && (
+                      <span className="inline-block text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-secondary text-muted-foreground border border-border">
+                        📍 {company.country}
+                      </span>
+                    )}
                   </button>
                 );
               })}
