@@ -11,7 +11,7 @@ interface DiscoveredCompany {
 }
 
 interface CompanyDiscoveryProps {
-  onSelectCompanies: (urls: string[]) => void;
+  onSelectCompanies: (urls: string[], theme?: string) => void;
 }
 
 const CompanyDiscovery = ({ onSelectCompanies }: CompanyDiscoveryProps) => {
