@@ -30,7 +30,8 @@ const Index = () => {
           if (error) throw new Error(`Failed for ${url}: ${error.message}`);
           if (!data?.conversationStarters && !data?.insights)
             throw new Error(data?.error || `Analysis failed for ${url}`);
-          return {
+
+          const snapshot = {
             companyProfile: data.companyProfile || {},
             signals: data.signals || {},
             recentChanges: data.recentChanges || [],
@@ -39,6 +40,20 @@ const Index = () => {
             whyItMatters: data.whyItMatters,
             confidenceScore: data.confidenceScore ?? 0,
           } as SnapshotResult;
+
+          // Store in database
+          await supabase.from("prospect_snapshots" as any).insert({
+            url,
+            company_profile: snapshot.companyProfile,
+            signals: snapshot.signals,
+            recent_changes: snapshot.recentChanges,
+            insights: snapshot.insights,
+            conversation_starters: snapshot.conversationStarters,
+            why_it_matters: snapshot.whyItMatters,
+            confidence_score: snapshot.confidenceScore,
+          } as any);
+
+          return snapshot;
         })
       );
       setSnapshots(results);
