@@ -28,6 +28,7 @@ const Index = () => {
 
       if (data?.insights) {
         setSnapshot({
+          signals: data.signals || {},
           insights: data.insights,
           conversationStarter: data.conversationStarter,
           whyItMatters: data.whyItMatters,
