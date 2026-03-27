@@ -50,7 +50,7 @@ const CompanyInput = forwardRef<HTMLDivElement, CompanyInputProps>(
                   </>
                 ) : (
                   <>
-                    Analyze
+                    Generate Snapshot
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
