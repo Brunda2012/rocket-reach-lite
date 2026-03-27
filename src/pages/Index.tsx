@@ -40,6 +40,7 @@ const Index = () => {
             whyItMatters: data.whyItMatters,
             confidenceScore: data.confidenceScore ?? 0,
             suitabilityScore: data.suitabilityScore ?? 0,
+            publicContacts: data.publicContacts,
           } as SnapshotResult;
 
           // Store in database
