@@ -128,9 +128,31 @@ function buildPlainText(data: SnapshotResult): string {
 }
 
 /* ── main component ── */
-const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
+const SnapshotDisplay = ({ data, userTheme }: { data: SnapshotResult; userTheme?: string }) => {
   const profile = data.companyProfile;
   const [copiedAll, setCopiedAll] = useState(false);
+  const [outreach, setOutreach] = useState<OutreachEmail | null>(null);
+  const [outreachLoading, setOutreachLoading] = useState(false);
+
+  const generateOutreach = async () => {
+    setOutreachLoading(true);
+    try {
+      const { data: result, error } = await supabase.functions.invoke("generate-outreach", {
+        body: {
+          snapshot: data,
+          prospectEmail: data.prospectEmail,
+          userTheme,
+        },
+      });
+      if (error) throw error;
+      if (result?.error) throw new Error(result.error);
+      setOutreach(result);
+    } catch (e) {
+      console.error("Outreach generation failed:", e);
+    } finally {
+      setOutreachLoading(false);
+    }
+  };
 
   const score = data.confidenceScore ?? 0;
   const scoreColor = score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive";
