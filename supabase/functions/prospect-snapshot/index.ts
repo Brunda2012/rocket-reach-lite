@@ -34,7 +34,7 @@ serve(async (req) => {
       formattedUrl = `https://${formattedUrl}`;
     }
     const baseUrl = formattedUrl.replace(/\/+$/, "");
-    const subPaths = ["/about", "/about-us", "/careers", "/jobs", "/blog", "/contact", "/contact-us"];
+    const subPaths = ["/about", "/about-us", "/team", "/our-team", "/people", "/leadership", "/careers", "/jobs", "/blog", "/contact", "/contact-us"];
 
     function stripHtml(html: string): string {
       return html
@@ -155,17 +155,18 @@ serve(async (req) => {
           {
             role: "system",
             content: `You are an SDR doing deep research on a company.
-Input: Raw text scraped from multiple pages of the company's website (homepage, about, careers, blog) and optionally their LinkedIn company page.
+Input: Raw text scraped from multiple pages of the company's website (homepage, about, careers, blog, team, contact) and optionally their LinkedIn company page.
 Return a structured JSON object with these exact sections:
 
 1. companyOverview — industry, estimated size (Startup/SMB/Mid-Market/Enterprise), 5-8 defining keywords, and brand tone in 2-3 words.
 2. strategicSignals — five categories: hiringSignals (open roles, team growth), techStack (technologies used), strategicInitiatives (key moves, launches, partnerships), painPoints (challenges inferred from content), growthIndicators (funding, expansion, revenue signals). Each is an array of concise strings.
 3. recentChanges — anything new, changing, or recently updated: product launches, leadership changes, partnerships, announcements, events. Look for dates, "new", "announcing", "just launched", etc.
-4. personaStarters — 4 conversation openers each tailored to a persona: CTO (tech/architecture), CEO (strategy/vision), Head of Operations (efficiency/scale), Head of Sales (pipeline/revenue). Plus a whyItMatters sentence.
-5. confidenceScore — 0-100 based on data completeness. 90+ = rich multi-page data. 60-89 = decent but gaps. <60 = sparse/generic.
-6. suitabilityScore — 0-100 rating of how promising this company is as a prospect. Weight: industry fit & relevance (25%), growth indicators strength (25%), hiring activity level (25%), pain points that suggest need for solutions (25%). 90+ = exceptional prospect. 70-89 = strong. 50-69 = moderate. <50 = weak fit.
+4. keyPeople — extract real people mentioned on the website: founders, executives, team leads, board members. For each person include their full name, role/title, and email if visible. Also look for LinkedIn profile URLs. Extract as many as you can find (up to 10). If no people are found, return an empty array.
+5. personaStarters — 4 conversation openers each tailored to a persona: CTO (tech/architecture), CEO (strategy/vision), Head of Operations (efficiency/scale), Head of Sales (pipeline/revenue). Plus a whyItMatters sentence.
+6. confidenceScore — 0-100 based on data completeness. 90+ = rich multi-page data. 60-89 = decent but gaps. <60 = sparse/generic.
+7. suitabilityScore — 0-100 rating of how promising this company is as a prospect. Weight: industry fit & relevance (25%), growth indicators strength (25%), hiring activity level (25%), pain points that suggest need for solutions (25%). 90+ = exceptional prospect. 70-89 = strong. 50-69 = moderate. <50 = weak fit.
 
-Keep everything short, specific, and non-salesy.`,
+Keep everything short, specific, and non-salesy. For keyPeople, ONLY include real names found in the scraped text — never fabricate names or emails.`,
           },
           {
             role: "user",
@@ -211,6 +212,21 @@ Keep everything short, specific, and non-salesy.`,
                     items: { type: "string" },
                     description: "New or recently updated items — launches, announcements, leadership changes",
                   },
+                  keyPeople: {
+                    type: "array",
+                    description: "Real people found on the website — founders, executives, team leads, board members",
+                    items: {
+                      type: "object",
+                      properties: {
+                        name: { type: "string", description: "Full name of the person" },
+                        role: { type: "string", description: "Job title or role" },
+                        email: { type: "string", description: "Email address if found on the website" },
+                        linkedinUrl: { type: "string", description: "LinkedIn profile URL if found" },
+                      },
+                      required: ["name", "role"],
+                      additionalProperties: false,
+                    },
+                  },
                   personaStarters: {
                     type: "object",
                     description: "Conversation starters per persona plus a summary",
@@ -233,7 +249,7 @@ Keep everything short, specific, and non-salesy.`,
                     description: "0-100 prospect suitability score based on industry fit, growth signals, hiring activity, and pain points",
                   },
                 },
-                required: ["companyOverview", "strategicSignals", "recentChanges", "personaStarters", "confidenceScore", "suitabilityScore"],
+                required: ["companyOverview", "strategicSignals", "recentChanges", "keyPeople", "personaStarters", "confidenceScore", "suitabilityScore"],
                 additionalProperties: false,
               },
             },
@@ -282,6 +298,7 @@ Keep everything short, specific, and non-salesy.`,
         whyItMatters: result.personaStarters?.whyItMatters,
         confidenceScore: result.confidenceScore,
         suitabilityScore: result.suitabilityScore,
+        keyPeople: result.keyPeople || [],
         publicContacts,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

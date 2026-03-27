@@ -56,6 +56,7 @@ const Index = () => {
             confidenceScore: data.confidenceScore ?? 0,
             suitabilityScore: data.suitabilityScore ?? 0,
             publicContacts: data.publicContacts,
+            keyPeople: data.keyPeople || [],
             prospectEmail: prospectEmail,
           } as SnapshotResult;
 

@@ -2,7 +2,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   ArrowLeft, Building2, Briefcase, Code, Rocket, AlertTriangle, TrendingUp,
   Target, CheckCircle, Zap, Send, Loader2, Copy, Check, Star, Mail,
-  Phone, ExternalLink, MessageSquare, RefreshCw,
+  Phone, ExternalLink, MessageSquare, RefreshCw, UserCircle, Linkedin, Users,
 } from "lucide-react";
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
@@ -144,6 +144,40 @@ const OutreachEngine = () => {
                   </div>
                 );
               })}
+
+              {/* Key People */}
+              {snapshot.keyPeople && snapshot.keyPeople.length > 0 && (
+                <div className="bg-card rounded-xl border border-border shadow-card p-4 animate-fade-in-up">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-6 h-6 rounded-md bg-primary/10 flex items-center justify-center">
+                      <Users className="w-3 h-3 text-primary" />
+                    </div>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Key People</span>
+                    <span className="ml-auto text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">{snapshot.keyPeople.length}</span>
+                  </div>
+                  <div className="space-y-2">
+                    {snapshot.keyPeople.map((person, i) => (
+                      <div key={i} className="flex items-start gap-2 p-2 rounded-lg bg-secondary/40 border border-border">
+                        <UserCircle className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-foreground truncate">{person.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{person.role}</p>
+                          {person.email && (
+                            <a href={`mailto:${person.email}`} className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-0.5">
+                              <Mail className="w-2.5 h-2.5" /> {person.email}
+                            </a>
+                          )}
+                          {person.linkedinUrl && (
+                            <a href={person.linkedinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline mt-0.5 ml-2">
+                              <Linkedin className="w-2.5 h-2.5" /> Profile
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Key Insights */}
               {snapshot.insights?.length > 0 && (
