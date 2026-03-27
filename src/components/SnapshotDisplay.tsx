@@ -41,6 +41,8 @@ export interface PublicContacts {
   emails: string[];
   phones: string[];
   formUrls: string[];
+  address?: string;
+  contactFormUrl?: string;
 }
 
 export interface OutreachEmail {
@@ -53,6 +55,7 @@ export interface OutreachEmail {
 
 export interface SnapshotResult {
   companyProfile: CompanyProfile;
+  helpfulFor?: string[];
   signals: SnapshotSignals;
   recentChanges: string[];
   insights: string[];
