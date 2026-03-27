@@ -34,6 +34,7 @@ export interface SnapshotResult {
   insights: string[];
   conversationStarters: ConversationStarters;
   whyItMatters: string;
+  confidenceScore: number;
 }
 
 /* ── helpers ── */
@@ -85,6 +86,11 @@ function SectionHeader({ icon: Icon, title, accent }: { icon: React.ElementType;
 const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
   const profile = data.companyProfile;
 
+  const score = data.confidenceScore ?? 0;
+  const scoreColor = score >= 80 ? "text-success" : score >= 60 ? "text-warning" : "text-destructive";
+  const scoreBg = score >= 80 ? "bg-success" : score >= 60 ? "bg-warning" : "bg-destructive";
+  const scoreLabel = score >= 80 ? "High" : score >= 60 ? "Medium" : "Low";
+
   return (
     <section className="py-16 px-4">
       <div className="max-w-4xl mx-auto space-y-5">
@@ -97,6 +103,29 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
             <div>
               <h2 className="text-2xl font-bold text-foreground tracking-tight">Prospect Snapshot</h2>
               <p className="text-xs text-muted-foreground">AI-generated intelligence report</p>
+            </div>
+          </div>
+
+          {/* Confidence Score Badge */}
+          <div className="flex items-center gap-3 bg-card rounded-2xl shadow-card border border-border px-5 py-3">
+            <div className="text-right">
+              <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">Confidence</p>
+              <p className={`text-xs font-bold ${scoreColor}`}>{scoreLabel}</p>
+            </div>
+            <div className="relative w-12 h-12">
+              <svg className="w-12 h-12 -rotate-90" viewBox="0 0 48 48">
+                <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="3" className="text-border" />
+                <circle
+                  cx="24" cy="24" r="20" fill="none" strokeWidth="3"
+                  strokeDasharray={`${(score / 100) * 125.66} 125.66`}
+                  strokeLinecap="round"
+                  className={scoreColor}
+                  stroke="currentColor"
+                />
+              </svg>
+              <span className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${scoreColor}`}>
+                {score}
+              </span>
             </div>
           </div>
         </div>
