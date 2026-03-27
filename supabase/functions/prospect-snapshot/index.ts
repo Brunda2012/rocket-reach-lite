@@ -111,7 +111,7 @@ serve(async (req) => {
           {
             role: "system",
             content: `You are an SDR doing deep research on a company.
-Input: Raw text scraped from multiple pages of the company's website (homepage, about, careers, blog).
+Input: Raw text scraped from multiple pages of the company's website (homepage, about, careers, blog) and optionally their LinkedIn company page.
 Task:
 - Infer a company profile: industry, estimated company size, top keywords, and brand tone/voice.
 - Extract structured signals: hiring signals, tech stack, strategic initiatives, pain points, and growth indicators.
@@ -123,7 +123,7 @@ Keep everything short, specific, and non-salesy.`,
           },
           {
             role: "user",
-            content: `Here is text scraped from multiple pages of ${formattedUrl}:\n\n${visibleText}`,
+            content: `Here is text scraped from multiple pages of ${formattedUrl}${linkedinUrl ? " and their LinkedIn page" : ""}:\n\n${combinedText}`,
           },
         ],
         tools: [
