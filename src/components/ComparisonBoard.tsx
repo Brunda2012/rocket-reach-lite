@@ -4,12 +4,12 @@ import {
 } from "lucide-react";
 import type { SnapshotResult, SnapshotSignals, ConversationStarters } from "./SnapshotDisplay";
 
-const signalSections: { key: keyof SnapshotSignals; label: string; icon: React.ElementType; accent: string }[] = [
-  { key: "hiringSignals", label: "Hiring", icon: Briefcase, accent: "bg-info/10 text-info" },
-  { key: "techStack", label: "Tech Stack", icon: Code, accent: "bg-primary/10 text-primary" },
-  { key: "strategicInitiatives", label: "Initiatives", icon: Rocket, accent: "bg-accent/10 text-accent" },
-  { key: "painPoints", label: "Pain Points", icon: AlertTriangle, accent: "bg-warning/10 text-warning" },
-  { key: "growthIndicators", label: "Growth", icon: TrendingUp, accent: "bg-success/10 text-success" },
+const signalSections: { key: keyof SnapshotSignals; label: string; icon: React.ElementType; accent: string; cellBg: string; dotColor: string }[] = [
+  { key: "hiringSignals", label: "Hiring", icon: Briefcase, accent: "bg-warning/10 text-warning", cellBg: "bg-warning/5", dotColor: "bg-warning" },
+  { key: "techStack", label: "Tech Stack", icon: Code, accent: "bg-info/10 text-info", cellBg: "bg-info/5", dotColor: "bg-info" },
+  { key: "strategicInitiatives", label: "Initiatives", icon: Rocket, accent: "bg-info/10 text-info", cellBg: "bg-info/5", dotColor: "bg-info" },
+  { key: "painPoints", label: "Pain Points", icon: AlertTriangle, accent: "bg-destructive/10 text-destructive", cellBg: "bg-destructive/5", dotColor: "bg-destructive" },
+  { key: "growthIndicators", label: "Growth", icon: TrendingUp, accent: "bg-success/10 text-success", cellBg: "bg-success/5", dotColor: "bg-success" },
 ];
 
 const personas: { key: keyof ConversationStarters; label: string; emoji: string }[] = [
@@ -114,7 +114,7 @@ const ComparisonBoard = ({ snapshots }: { snapshots: SnapshotResult[] }) => {
           <div className="gradient-subtle p-4 border-b border-border">
             <SectionLabel icon={Target} label="Strategic Signals" accent="bg-accent/10 text-accent" />
           </div>
-          {signalSections.map(({ key, label, icon: Icon, accent }) => {
+          {signalSections.map(({ key, label, icon: Icon, accent, cellBg, dotColor }) => {
             const hasAny = snapshots.some((s) => s.signals?.[key]?.length > 0);
             if (!hasAny) return null;
             return (
@@ -129,17 +129,19 @@ const ComparisonBoard = ({ snapshots }: { snapshots: SnapshotResult[] }) => {
                 </div>
                 <div className={`grid ${gridCols} divide-x divide-border`}>
                   {snapshots.map((s, i) => (
-                    <ul key={i} className="px-5 pb-4 space-y-1.5">
-                      {(s.signals?.[key] || []).map((item, j) => (
-                        <li key={j} className="flex items-start gap-1.5">
-                          <div className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/40 shrink-0" />
-                          <span className="text-xs text-foreground/75 leading-relaxed">{item}</span>
-                        </li>
-                      ))}
-                      {(!s.signals?.[key] || s.signals[key].length === 0) && (
-                        <li className="text-xs text-muted-foreground/50 italic">No data</li>
-                      )}
-                    </ul>
+                    <div key={i} className={`px-5 pb-4 ${cellBg}`}>
+                      <ul className="space-y-1.5">
+                        {(s.signals?.[key] || []).map((item, j) => (
+                          <li key={j} className="flex items-start gap-1.5">
+                            <div className={`mt-1.5 w-1.5 h-1.5 rounded-full ${dotColor} shrink-0`} />
+                            <span className="text-xs text-foreground/75 leading-relaxed">{item}</span>
+                          </li>
+                        ))}
+                        {(!s.signals?.[key] || s.signals[key].length === 0) && (
+                          <li className="text-xs text-muted-foreground/50 italic">No data</li>
+                        )}
+                      </ul>
+                    </div>
                   ))}
                 </div>
               </div>
