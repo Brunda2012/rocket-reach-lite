@@ -30,6 +30,7 @@ const Index = () => {
         setSnapshot({
           companyProfile: data.companyProfile || {},
           signals: data.signals || {},
+          recentChanges: data.recentChanges || [],
           insights: data.insights,
           conversationStarters: data.conversationStarters || {},
           whyItMatters: data.whyItMatters,

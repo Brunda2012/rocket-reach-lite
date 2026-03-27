@@ -228,6 +228,7 @@ Keep everything short, specific, and non-salesy.`,
       return new Response(JSON.stringify({
         companyProfile: result.companyProfile,
         signals: result.signals,
+        recentChanges: result.recentChanges,
         insights: result.insights,
         conversationStarters: result.conversationStarters,
         whyItMatters: result.whyItMatters,

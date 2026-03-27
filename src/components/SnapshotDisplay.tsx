@@ -1,4 +1,4 @@
-import { MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code, Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2 } from "lucide-react";
+import { MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code, Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2, Zap } from "lucide-react";
 
 export interface CompanyProfile {
   industry: string;
@@ -25,6 +25,7 @@ export interface ConversationStarters {
 export interface SnapshotResult {
   companyProfile: CompanyProfile;
   signals: SnapshotSignals;
+  recentChanges: string[];
   insights: string[];
   conversationStarters: ConversationStarters;
   whyItMatters: string;
@@ -104,6 +105,24 @@ const SnapshotDisplay = ({ data }: { data: SnapshotResult }) => {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Recent Changes */}
+          {data.recentChanges?.length > 0 && (
+            <div className="px-8 py-6">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 flex items-center gap-2">
+                <Zap className="w-4 h-4 text-accent" />
+                What's New / Recently Changed
+              </h3>
+              <ul className="space-y-2">
+                {data.recentChanges.map((change, i) => (
+                  <li key={i} className="flex items-start gap-3">
+                    <span className="mt-1.5 w-2 h-2 rounded-full bg-accent shrink-0" />
+                    <span className="text-sm text-foreground/85 leading-relaxed">{change}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 
