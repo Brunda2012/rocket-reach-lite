@@ -119,6 +119,7 @@ Return a structured JSON object with these exact sections:
 3. recentChanges — anything new, changing, or recently updated: product launches, leadership changes, partnerships, announcements, events. Look for dates, "new", "announcing", "just launched", etc.
 4. personaStarters — 4 conversation openers each tailored to a persona: CTO (tech/architecture), CEO (strategy/vision), Head of Operations (efficiency/scale), Head of Sales (pipeline/revenue). Plus a whyItMatters sentence.
 5. confidenceScore — 0-100 based on data completeness. 90+ = rich multi-page data. 60-89 = decent but gaps. <60 = sparse/generic.
+6. suitabilityScore — 0-100 rating of how promising this company is as a prospect. Weight: industry fit & relevance (25%), growth indicators strength (25%), hiring activity level (25%), pain points that suggest need for solutions (25%). 90+ = exceptional prospect. 70-89 = strong. 50-69 = moderate. <50 = weak fit.
 
 Keep everything short, specific, and non-salesy.`,
           },
@@ -183,8 +184,12 @@ Keep everything short, specific, and non-salesy.`,
                     type: "number",
                     description: "0-100 data completeness score",
                   },
+                  suitabilityScore: {
+                    type: "number",
+                    description: "0-100 prospect suitability score based on industry fit, growth signals, hiring activity, and pain points",
+                  },
                 },
-                required: ["companyOverview", "strategicSignals", "recentChanges", "personaStarters", "confidenceScore"],
+                required: ["companyOverview", "strategicSignals", "recentChanges", "personaStarters", "confidenceScore", "suitabilityScore"],
                 additionalProperties: false,
               },
             },
@@ -232,6 +237,7 @@ Keep everything short, specific, and non-salesy.`,
         },
         whyItMatters: result.personaStarters?.whyItMatters,
         confidenceScore: result.confidenceScore,
+        suitabilityScore: result.suitabilityScore,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
