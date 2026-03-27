@@ -1,7 +1,7 @@
 import {
   MessageSquare, Target, CheckCircle, Sparkles, Briefcase, Code,
   Rocket, AlertTriangle, TrendingUp, Building2, Users, Hash, Volume2,
-  Zap, Copy, Check, ClipboardList, Download
+  Zap, Copy, Check, ClipboardList, Download, Mail, Phone, ExternalLink
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -28,6 +28,12 @@ export interface ConversationStarters {
   headOfSales: string;
 }
 
+export interface PublicContacts {
+  emails: string[];
+  phones: string[];
+  formUrls: string[];
+}
+
 export interface SnapshotResult {
   companyProfile: CompanyProfile;
   signals: SnapshotSignals;
@@ -37,6 +43,7 @@ export interface SnapshotResult {
   whyItMatters: string;
   confidenceScore: number;
   suitabilityScore: number;
+  publicContacts?: PublicContacts;
 }
 
 /* ── helpers ── */
