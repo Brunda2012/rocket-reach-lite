@@ -2,13 +2,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Building2, Users, Volume2, Hash, Briefcase, Code, Rocket, AlertTriangle,
   TrendingUp, Zap, MessageSquare, Mail, Phone, ExternalLink, Target,
-  CheckCircle, ArrowLeft, Copy, Check, Shield, BarChart3,
+  CheckCircle, ArrowLeft, Copy, Check, Shield, BarChart3, UserCircle, Linkedin,
 } from "lucide-react";
 import { useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import TopNav from "@/components/TopNav";
 import { Button } from "@/components/ui/button";
-import type { SnapshotResult, SnapshotSignals, ConversationStarters } from "@/components/SnapshotDisplay";
+import type { SnapshotResult, SnapshotSignals, ConversationStarters, KeyPerson } from "@/components/SnapshotDisplay";
 
 const signalSections: { key: keyof SnapshotSignals; label: string; icon: React.ElementType; accent: string; tagBg: string; tagText: string; dotColor: string }[] = [
   { key: "hiringSignals", label: "Hiring Signals", icon: Briefcase, accent: "bg-warning/10 text-warning", tagBg: "bg-warning/10", tagText: "text-warning", dotColor: "bg-warning" },
